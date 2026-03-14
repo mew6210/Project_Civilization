@@ -75,11 +75,16 @@ void Map::loadMapData(const std::string& f) {
 
 	}
 
-	mapData.setWidth(width);
-	mapData.setHeight(height);
-	mapData.setData(data);
+	m_mapData.setWidth(width);
+	m_mapData.setHeight(height);
+	m_mapData.setData(data);
 }
 
 void Map::saveMapData() {
-	throw std::exception("not implemented yet");
+	std::ofstream file("mapData.txt"); //TODO: should check if this file name is already taken, and suggest a different one maybe
+
+	file << "width: " << m_mapData.getWidth() << "\n";
+	file << "height: " << m_mapData.getHeight() << "\n";
+	file << "data: " << m_mapData.getDataString() << "\n";
+
 }

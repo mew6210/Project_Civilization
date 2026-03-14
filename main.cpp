@@ -5,7 +5,7 @@ int main(){
     
     Map map;
     map.loadMapData("map_test.txt");
-
+    map.saveMapData();
     sf::Window window(sf::VideoMode({ 800, 600 }), "My window");
 
     while (window.isOpen()){

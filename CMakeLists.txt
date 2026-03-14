@@ -12,6 +12,6 @@ SFML::Graphics
 SFML::System
 )
 
-add_executable (${PROJECT_NAME} "main.cpp" "map/map.cpp")
+add_executable (${PROJECT_NAME} "main.cpp" "map/map.cpp" "map/mapData/mapdata.cpp")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES})

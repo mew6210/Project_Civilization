@@ -4,7 +4,7 @@
 
 class Map {
 
-	MapData mapData;
+	MapData m_mapData;
 	
 public:
 	void loadMapData(const std::string&);
