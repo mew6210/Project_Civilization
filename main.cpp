@@ -4,6 +4,7 @@
 int main(){
     
     Map map;
+    map.loadMapData("map_test.txt");
 
     sf::Window window(sf::VideoMode({ 800, 600 }), "My window");
 
