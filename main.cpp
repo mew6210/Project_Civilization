@@ -1,6 +1,10 @@
 ﻿#include <SFML/Window.hpp>
+#include "map/map.hpp"
 
 int main(){
+    
+    Map map;
+
     sf::Window window(sf::VideoMode({ 800, 600 }), "My window");
 
     while (window.isOpen()){
