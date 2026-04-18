@@ -4,6 +4,12 @@
 #include <vector>
 #include <string>
 
+/*
+	@brief Holds size and pixels of a map.
+
+	You probably should not initialize it outside of Map class.
+
+*/
 class MapData {
 
 	uint16_t m_width = 0;
@@ -19,5 +25,5 @@ public:
 	uint16_t getWidth() const { return m_width; }
 	uint16_t getHeight() const { return m_height; }
 	std::string getDataString() const { return dataToDataString(); };
-
+	std::vector<TileType> getDataCopy() { return m_data; }
 };

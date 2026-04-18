@@ -44,8 +44,7 @@ void handleDataString(const std::string& line,std::vector<TileType>& data) {
 
 }
 
-void Map::loadMapData(const std::string& f) {
-
+void Map::initMapData(const std::string& f) {
 	std::ifstream file(f);
 	if (!file.good()) {
 		throw std::exception("map data file failed to open");
@@ -54,7 +53,7 @@ void Map::loadMapData(const std::string& f) {
 	std::string line = "";
 	uint16_t width = 0;
 	uint16_t height = 0;
-	std::vector<TileType> data;
+	std::vector<TileType> tiles;
 
 	while (std::getline(file, line)) {
 		if (line.size() == 0) continue;
@@ -70,21 +69,57 @@ void Map::loadMapData(const std::string& f) {
 		if (line.starts_with("data: ")) {
 			line = line.substr(5);
 			trimLib::trim(line);
-			handleDataString(line, data);
+			handleDataString(line, tiles);
 		}
 
 	}
 
-	m_mapData.setWidth(width);
-	m_mapData.setHeight(height);
-	m_mapData.setData(data);
+	m_data.setWidth(width);
+	m_data.setHeight(height);
+	m_data.setData(tiles);
+}
+
+void Map::initMap(const std::string& file) {
+	initMapData(file);
+	initTexture();
 }
 
 void Map::saveMapData() {
 	std::ofstream file("mapData.txt"); //TODO: should check if this file name is already taken, and suggest a different one maybe
 
-	file << "width: " << m_mapData.getWidth() << "\n";
-	file << "height: " << m_mapData.getHeight() << "\n";
-	file << "data: " << m_mapData.getDataString() << "\n";
+	file << "width: " << m_data.getWidth() << "\n";
+	file << "height: " << m_data.getHeight() << "\n";
+	file << "data: " << m_data.getDataString() << "\n";
 
+}
+
+void Map::initTexture() {
+
+	auto data = m_data.getDataCopy();
+	uint64_t pixelsCount = m_data.getWidth() * m_data.getHeight();
+	std::vector<uint8_t> pixels(pixelsCount * 4);
+	
+	for (size_t i = 0; i < data.size(); ++i) {
+
+		sf::Color color;
+
+		switch (data[i]) {
+			case TileType::TreeSoil: color = sf::Color(22, 102, 46); break;
+			case TileType::FertileSoil: color = sf::Color(30, 235, 92); break;
+			case TileType::SemiFertileSoil: color = sf::Color(163, 224, 92); break;
+			case TileType::NotFertileSoil: color = sf::Color(135, 126, 82); break;
+		}
+
+		pixels[i * 4 + 0] = color.r;
+		pixels[i * 4 + 1] = color.g;
+		pixels[i * 4 + 2] = color.b;
+		pixels[i * 4 + 3] = color.a;
+
+	}
+
+	if (!(m_texture.resize({ m_data.getWidth(), m_data.getHeight() }))) {
+		throw std::exception("error resizing texture");
+	}
+
+	m_texture.update(pixels.data());
 }

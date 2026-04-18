@@ -1,10 +1,9 @@
 #pragma once
 
 enum class TileType : uint8_t {
-	Water,  //0
-	TreeSoil, //1
-	FertileSoil, //2
-	SemiFertileSoil, //3
-	NotFertileSoil //4
+	TreeSoil = 0, //0
+	FertileSoil, //1
+	SemiFertileSoil, //2
+	NotFertileSoil //3
 };
 //in map file, they are addressed as if they would be an int, exactly like shown above
