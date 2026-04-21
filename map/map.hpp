@@ -23,6 +23,7 @@ class Map {
 
 public:
 	void saveMapData();
+	MapData& getMapData() { return m_data; }
 	sf::Texture& getTexture() { return m_texture; }
 
 	Map(const std::string& s){
