@@ -13,3 +13,7 @@ std::string MapData::dataToDataString() const {
 	}
 	return buf;
 }
+
+TileType MapData::getTile(const uint16_t& row, const uint16_t& col) const {
+	return m_data[row * m_width + col];
+}
