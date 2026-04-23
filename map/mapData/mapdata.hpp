@@ -19,7 +19,7 @@ class MapData {
 	std::string dataToDataString() const;
 
 public:
-	TileType getTile(const uint16_t& row, const uint16_t& col);
+	TileType getTile(const uint16_t& row, const uint16_t& col) const;
 	void setWidth(const uint16_t& w) { m_width = w; }
 	void setHeight(const uint16_t& h) { m_height = h; }
 	void setData(std::vector<TileType>& d) { m_data = std::move(d); }

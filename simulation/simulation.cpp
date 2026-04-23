@@ -5,14 +5,17 @@ void Simulation::simulate() {
 	std::cout << "simulation ran\n";
 }
 
-Simulation::Simulation(MapData& md) {
+Simulation::Simulation(const MapData& md) {
 	m_mapWidth = md.getWidth();
 	m_mapHeight = md.getHeight();
 
 	initTileGrid(md);
 }
 
-void Simulation::initTileGrid(MapData& mData) {
+/*
+	@brief creates a 2-dimensional NxM vector from a 1-dimensional N vector. 
+*/
+void Simulation::initTileGrid(const MapData& mData) {
 
 	for (size_t i = 0; i < mData.getHeight(); i++) {
 		std::vector<TileType> row = {};

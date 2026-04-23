@@ -5,8 +5,7 @@
 /*
 	@brief Represents map's sprite used for drawing the map.
 
-	Initialized with a Map class, with a valid texture used to create the sprite.
-
+	@param Map map with a valid texture
 */
 class MapView {
 

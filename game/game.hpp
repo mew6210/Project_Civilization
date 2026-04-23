@@ -3,7 +3,10 @@
 #include "../map/mapView/mapview.hpp"
 #include "../simulation/simulation.hpp"
 
-
+/*
+	@brief represents everything that is needed to start a game
+	@param filepath path to a file that holds valid mapdata
+*/
 class Game {
 	Map map;
 	MapView mView;
