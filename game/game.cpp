@@ -40,5 +40,7 @@ void Game::advanceSimulation(sf::Clock& cl, float& accumulator, const float& dt)
 void Game::render(sf::RenderWindow& window){
     window.clear(sf::Color::Black);
     mView.drawMap(window);
+    sim.drawEntities(window);
     window.display();
+
 }

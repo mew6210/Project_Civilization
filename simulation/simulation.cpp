@@ -1,28 +1,22 @@
 #include "simulation.hpp"
 #include <iostream>
 
+Simulation::Simulation(const MapData& md) : m_wState(md) {
+
+	m_entities.push_back(Entity{ m_wState, 100,100});
+	m_entities.push_back(Entity{ m_wState, 200,200});
+	m_entities.push_back(Entity{ m_wState, 300,300});
+	m_entities.push_back(Entity{ m_wState, 400,400});
+}
+
 void Simulation::simulate() {
-	std::cout << "simulation ran\n";
+	for (auto& ent : m_entities) {
+		ent.sim();
+	}
 }
 
-Simulation::Simulation(const MapData& md) {
-	m_mapWidth = md.getWidth();
-	m_mapHeight = md.getHeight();
-
-	initTileGrid(md);
-}
-
-/*
-	@brief creates a 2-dimensional NxM vector from a 1-dimensional N vector. 
-*/
-void Simulation::initTileGrid(const MapData& mData) {
-
-	for (size_t i = 0; i < mData.getHeight(); i++) {
-		std::vector<TileType> row = {};
-		for (size_t j = 0; j < mData.getWidth(); j++) {
-			row.push_back(mData.getTile(i,j));
-		}
-
-		m_tileGrid.push_back(row);
+void Simulation::drawEntities(sf::RenderWindow& window) {
+	for (const auto& ent : m_entities) {
+		ent.render(window);
 	}
 }

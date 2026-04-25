@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 enum class TileType : uint8_t {
 	TreeSoil = 0, //0
