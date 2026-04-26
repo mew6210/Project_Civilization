@@ -2,11 +2,11 @@
 #include <iostream>
 
 Simulation::Simulation(const MapData& md) : m_wState(md) {
+	uint16_t widthHalf = m_wState.getMapSize().m_width / 2;
+	uint16_t heightHalf = m_wState.getMapSize().m_height / 2;
+	m_entities.push_back(Entity{ m_wState, widthHalf,heightHalf});
+	m_entities.push_back(Entity{ m_wState, widthHalf,heightHalf});
 
-	m_entities.push_back(Entity{ m_wState, 100,100});
-	m_entities.push_back(Entity{ m_wState, 200,200});
-	m_entities.push_back(Entity{ m_wState, 300,300});
-	m_entities.push_back(Entity{ m_wState, 400,400});
 }
 
 void Simulation::simulate() {

@@ -1,13 +1,17 @@
 #include "entity.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 
+/*
+	Currently renders a 1x1 guy as a 4x4 red square
+
+	TODO: maybe should be changed later to 1x1, when zoom is implemented
+*/
 void Entity::render(sf::RenderWindow& window) const {
 	sf::RectangleShape shape{ sf::Vector2f{4,4} };
 	shape.setPosition(sf::Vector2f{ float(m_entState.m_posX),float(m_entState.m_posY) });
 	shape.setFillColor(sf::Color{ 255,0,0 });
 	shape.setOutlineColor(sf::Color{ 255,0,0 });
 	window.draw(shape);
-	
 }
 
 void Entity::sim() {

@@ -1,16 +1,14 @@
 #include "action.hpp"
 #include "../../entitystate/entitystate.hpp"
 
-//TODO: AI-GENERATED, REPLACE LATER
 void MoveToAction::tick() {
 
 	int dx = static_cast<int>(m_DestinationX) - static_cast<int>(m_entState.m_posX);
 	int dy = static_cast<int>(m_DestinationY) - static_cast<int>(m_entState.m_posY);
 
-	// check if already at destination
 	if (dx == 0 && dy == 0) {
 		m_isDone = true;
-		return; // or mark task finished
+		return;
 	}
 
 	// move on X axis first

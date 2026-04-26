@@ -7,6 +7,9 @@
 #include "entitystate/entitystate.hpp"
 #include "task/task.hpp"
 
+/*
+	All that is needed to simulate and render one guy
+*/
 struct Entity {
 	EntityState m_entState;
 

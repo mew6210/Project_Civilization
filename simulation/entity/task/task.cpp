@@ -1,5 +1,10 @@
 #include "task.hpp"
 
+/*
+	Chooses a place in 50 tiles radius and creates an action to go to that place
+
+	Goes there every tick until its there
+*/
 void WanderRandTask::tick() {
 	if (m_actions.empty()) {
 		int dx = m_entState.m_wState.getRandInt(-50, 50);

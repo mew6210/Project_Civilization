@@ -1,6 +1,11 @@
 #include "../../entitystate/entitystate.hpp"
 #include <cstdint>
 
+/*
+	Represents a primitive action that an entity can be doing
+
+	Examples: going somewhere, standing somewhere for x amount of ticks
+*/
 struct Action {
 	EntityState& m_entState;
 	bool m_isDone = false;
