@@ -20,6 +20,6 @@ add_executable (${PROJECT_NAME}
 "simulation/simulation.cpp" 
 "game/game.cpp" 
 "simulation/entity/entity.cpp" 
-"simulation/worldstate/worldstate.cpp" "simulation/entity/task/task.cpp" "simulation/entity/task/action/action.cpp")
+"simulation/worldstate/worldstate.cpp" "simulation/entity/task/task.cpp" "simulation/entity/task/action/action.cpp" "simulation/entity/entitystate/entitystate.cpp")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES})

@@ -8,7 +8,6 @@
 #include "task/task.hpp"
 
 struct Entity {
-	uint32_t m_id = 0;
 	EntityState m_entState;
 
 	std::vector<std::unique_ptr<Task>> m_tasks = {};
