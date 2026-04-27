@@ -5,6 +5,7 @@
 #include "mapsize/mapsize.hpp"
 #include "worldstate/worldstate.hpp"
 #include "entity/entity.hpp"
+#include "type.hpp"
 
 /*
 	@brief represents simulation state 
@@ -24,5 +25,5 @@ public:
 	uint8_t getTickRate() const { return m_tickRate;}
 	void simulate();
 	void drawEntities(sf::RenderWindow&);
-
+	void spawnAt(sf::Vector2f pos, ActiveTool type);
 };

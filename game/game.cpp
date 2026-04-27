@@ -22,6 +22,20 @@ void Game::handleInput(sf::RenderWindow& window) {
     while (const std::optional event = window.pollEvent()) {
         if (event->is<sf::Event::Closed>())
             window.close();
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) currentTool = ActiveTool::None;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2)) currentTool = ActiveTool::Human;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3)) currentTool = ActiveTool::Tree;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4)) currentTool = ActiveTool::Bush;
+
+        if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+            if (mousePressed->button == sf::Mouse::Button::Left) {
+
+                sf::Vector2f spawnPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+                sim.spawnAt(spawnPos, currentTool);
+            }
+        }
     }
 }
 
