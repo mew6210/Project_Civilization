@@ -5,8 +5,8 @@ Simulation::Simulation(const MapData& md) : m_wState(md) {
 	m_entities.reserve(1000);
 	uint16_t widthHalf = m_wState.getMapSize().m_width / 2;
 	uint16_t heightHalf = m_wState.getMapSize().m_height / 2;
-	m_entities.push_back(Entity{ m_wState, widthHalf,heightHalf, ActiveTool::Human});
-	m_entities.push_back(Entity{ m_wState, widthHalf,heightHalf, ActiveTool::Human});
+	m_entities.push_back(Entity{ m_wState, widthHalf,heightHalf });
+	m_entities.push_back(Entity{ m_wState, widthHalf,heightHalf });
 
 }
 
@@ -25,5 +25,5 @@ void Simulation::drawEntities(sf::RenderWindow& window) {
 void Simulation::spawnAt(sf::Vector2f pos, ActiveTool type) {
 	if (type == ActiveTool::None) return;
 
-	m_entities.push_back(Entity{ m_wState, (uint16_t)pos.x, (uint16_t)pos.y, type });
+	if (type == ActiveTool::Entity) m_entities.push_back(Entity{ m_wState, (uint16_t)pos.x, (uint16_t)pos.y });
 }

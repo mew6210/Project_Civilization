@@ -5,7 +5,7 @@
 #include "mapsize/mapsize.hpp"
 #include "worldstate/worldstate.hpp"
 #include "entity/entity.hpp"
-#include "type.hpp"
+#include "../game/ActiveTool/ActiveTool.hpp"
 
 /*
 	@brief represents simulation state 

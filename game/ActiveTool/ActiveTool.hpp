@@ -2,7 +2,7 @@
 
 enum class ActiveTool {
 	None,
-	Human,
+	Entity,
 	Tree,
 	Bush,
 };
