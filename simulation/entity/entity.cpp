@@ -16,10 +16,10 @@ void Entity::render(sf::RenderWindow& window) const {
 
 void Entity::sim() {
 		if (m_tasks.empty()) {
-			m_tasks.push_back(std::make_unique<WanderRandTask>(m_entState));
+			m_tasks.push_back(std::make_unique<WanderRandTask>());
 		}
 
 		if (m_curTask < m_tasks.size()) {
-			m_tasks[m_curTask]->tick();
+			m_tasks[m_curTask]->tick(m_entState);
 		}
 	}
