@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
-#include "../../simulationstate/simulationstate.hpp"
+
+class SimulationState;
 
 /*
 	Holds variables that are needed for simulating an entity

@@ -4,7 +4,6 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "mapsize/mapsize.hpp"
 #include "simulationstate/simulationstate.hpp"
-#include "entity/entity.hpp"
 #include "../game/ActiveTool/ActiveTool.hpp"
 
 /*
@@ -14,7 +13,6 @@
 */
 class Simulation {
 	
-	std::vector<Entity> m_entities = {};
 	SimulationState m_wState;
 
 	uint8_t m_tickRate = 20;

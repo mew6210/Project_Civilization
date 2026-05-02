@@ -1,3 +1,4 @@
+#pragma once
 #include "../../entitystate/entitystate.hpp"
 #include <cstdint>
 

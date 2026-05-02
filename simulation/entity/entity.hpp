@@ -1,11 +1,13 @@
+#pragma once
 #include <cstdint>
 #include <vector>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-#include "../simulationstate/simulationstate.hpp"
 #include "entitystate/entitystate.hpp"
 #include "task/task.hpp"
+
+class SimulationState;
 
 /*
 	All that is needed to simulate and render one guy

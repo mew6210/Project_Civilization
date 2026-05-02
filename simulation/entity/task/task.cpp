@@ -1,4 +1,5 @@
 #include "task.hpp"
+#include "../../simulationstate/simulationstate.hpp"
 
 /*
 	Chooses a place in 50 tiles radius and creates an action to go to that place
