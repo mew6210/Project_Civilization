@@ -1,5 +1,6 @@
 #include "worldstate.hpp"
 #include "../structure/bush/bush.hpp"
+#include "../structure/tree/tree.hpp"
 
 WorldState::WorldState(const MapData& md) : rng(std::random_device{}()) {
 	mapSize.m_height = md.getHeight();
@@ -29,5 +30,6 @@ int WorldState::getRandInt(int min, int max) const {
 }
 
 void WorldState::addStructure(sf::Vector2f pos, StructureType type) {
-	m_structures.push_back(std::make_unique<Bush>(pos));
+	if (type == StructureType::Bush) m_structures.push_back(std::make_unique<Bush>(pos));
+	if (type == StructureType::Tree) m_structures.push_back(std::make_unique<Tree>(pos));
 }

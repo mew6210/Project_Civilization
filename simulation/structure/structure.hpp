@@ -17,4 +17,5 @@ public:
 public:
 	Structure(sf::Vector2f pos);
 	void setType(StructureType type) { m_type = type; }
+	StructureType getType() const { return m_type; }
 };
