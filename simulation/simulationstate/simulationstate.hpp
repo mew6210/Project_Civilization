@@ -11,7 +11,7 @@
 
 	Is shared by entities, should only be passed by const reference
 */
-class WorldState {
+class SimulationState {
 
 	MapSize mapSize;
 	std::vector<std::vector<TileType>> m_tileGrid = {};
@@ -27,5 +27,5 @@ public:
 	MapSize getMapSize() const { return mapSize; }
 	int getRandInt(int min, int max) const;
 	void addStructure(sf::Vector2f, StructureType);
-	WorldState(const MapData&);
+	SimulationState(const MapData&);
 };
