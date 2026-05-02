@@ -7,7 +7,7 @@
 	TODO: maybe should be changed later to 1x1, when zoom is implemented
 */
 void Entity::render(sf::RenderWindow& window) const {
-	sf::RectangleShape shape{ sf::Vector2f{4,4} };
+	sf::RectangleShape shape{ sf::Vector2f{4,4} }; //shape created every frame, TODO: make it static or something like that
 	shape.setPosition(sf::Vector2f{ float(m_entState.m_posX),float(m_entState.m_posY) });
 	shape.setFillColor(sf::Color::Red);
 

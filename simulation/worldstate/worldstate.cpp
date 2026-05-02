@@ -1,5 +1,5 @@
 #include "worldstate.hpp"
-
+#include "../structure/bush/bush.hpp"
 
 WorldState::WorldState(const MapData& md) : rng(std::random_device{}()) {
 	mapSize.m_height = md.getHeight();
@@ -26,4 +26,8 @@ void WorldState::initTileGrid(const MapData& mData) {
 int WorldState::getRandInt(int min, int max) const {
 	std::uniform_int_distribution<int> dist(min, max);
 	return dist(rng);
+}
+
+void WorldState::addStructure(sf::Vector2f pos, StructureType type) {
+	m_structures.push_back(std::make_unique<Bush>(pos));
 }

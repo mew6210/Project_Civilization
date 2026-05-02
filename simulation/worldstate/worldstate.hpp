@@ -3,7 +3,7 @@
 #include "../../map/mapData/tile.hpp"
 #include "../../map/mapData/mapdata.hpp"
 #include <random>
-
+#include "../structure/structure.hpp"
 /*
 	Holds everything needed for simulation regarding world state
 
@@ -15,13 +15,17 @@ class WorldState {
 
 	MapSize mapSize;
 	std::vector<std::vector<TileType>> m_tileGrid = {};
+	
+
  	mutable std::mt19937 rng;
 
 	void initTileGrid(const MapData&);
 public:
 
+	std::vector<std::unique_ptr<Structure>> m_structures = {};
+	
 	MapSize getMapSize() const { return mapSize; }
 	int getRandInt(int min, int max) const;
-
+	void addStructure(sf::Vector2f, StructureType);
 	WorldState(const MapData&);
 };

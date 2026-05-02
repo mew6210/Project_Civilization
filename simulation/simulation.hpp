@@ -19,11 +19,13 @@ class Simulation {
 
 	uint8_t m_tickRate = 20;
 
+	void renderEntities(sf::RenderWindow&);
+	void renderStructures(sf::RenderWindow&);
 public:
 	
 	Simulation(const MapData& md);
 	uint8_t getTickRate() const { return m_tickRate;}
 	void simulate();
-	void drawEntities(sf::RenderWindow&);
+	void render(sf::RenderWindow&);
 	void spawnAt(sf::Vector2f pos, ActiveTool type);
 };
