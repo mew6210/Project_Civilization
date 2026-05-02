@@ -8,6 +8,7 @@ Simulation::Simulation(const MapData& md) : m_wState(md) {
 	uint16_t heightHalf = m_wState.getMapSize().m_height / 2;
 	m_wState.m_entities.push_back(Entity{ m_wState, widthHalf,heightHalf });
 	m_wState.m_entities.push_back(Entity{ m_wState, widthHalf,heightHalf });
+	m_wState.addStructure({ float(widthHalf),float(heightHalf)}, StructureType::TownHall);
 
 }
 

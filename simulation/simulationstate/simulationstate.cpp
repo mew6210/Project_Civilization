@@ -1,6 +1,7 @@
 #include "simulationstate.hpp"
 #include "../structure/bush/bush.hpp"
 #include "../structure/tree/tree.hpp"
+#include "../structure/townhall/townhall.hpp"
 
 SimulationState::SimulationState(const MapData& md) : rng(std::random_device{}()) {
 	mapSize.m_height = md.getHeight();
@@ -32,4 +33,5 @@ int SimulationState::getRandInt(int min, int max) const {
 void SimulationState::addStructure(sf::Vector2f pos, StructureType type) {
 	if (type == StructureType::Bush) m_structures.push_back(std::make_unique<Bush>(pos));
 	if (type == StructureType::Tree) m_structures.push_back(std::make_unique<Tree>(pos));
+	if (type == StructureType::TownHall) m_structures.push_back(std::make_unique<TownHall>(pos, *this));
 }
