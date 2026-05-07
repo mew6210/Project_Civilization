@@ -17,4 +17,5 @@ public:
 	void render(sf::RenderWindow&) override;
 	void tick() override;
 	Tree(sf::Vector2f);
+	StructureType getType() const override { return StructureType::Tree; }
 };

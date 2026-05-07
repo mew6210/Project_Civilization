@@ -2,6 +2,13 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
 
+//file-specific globals
+namespace {
+	constexpr uint8_t k_GatherThresholdAmount = 8;
+	constexpr uint8_t k_GatherTaskPriority = 10;
+	constexpr sf::Color k_TownHallColor = sf::Color(229, 232, 23);
+}
+
 /*
 	Currently renders a 1x1 townhall as a 6x6 square
 
@@ -10,11 +17,16 @@
 void TownHall::render(sf::RenderWindow& win){
 	sf::RectangleShape shape{ sf::Vector2f{6,6} }; //shape created every frame, TODO: make it static or something like that
 	shape.setPosition(m_pos);
-	shape.setFillColor(sf::Color(229, 232, 23));
+	shape.setFillColor(k_TownHallColor);
 
 	win.draw(shape);
 }
 
+/*
+	finds entity's id in a vector by its generated id 
+	
+	(usually its entityId +1, but in the future it wont be like that due to entity deaths)
+*/
 uint16_t TownHall::getEntityVectorIndexByEntityId(uint16_t id) {
 
 	for (uint16_t i = 0; i < m_simState.m_entities.size(); i++) {
@@ -23,6 +35,11 @@ uint16_t TownHall::getEntityVectorIndexByEntityId(uint16_t id) {
 
 }
 
+/*
+	tries to find an entity that is wandering around
+
+	it can return null, because there is a possibility of every entity being busy
+*/
 std::optional<uint16_t> TownHall::findNotBusyEntityId() {
 
 	uint16_t entityId = 0;
@@ -40,22 +57,29 @@ std::optional<uint16_t> TownHall::findNotBusyEntityId() {
 	else return std::nullopt;
 }
 
+/*
+	 finds a suitable bush, that is:
+
+	unclaimed, has the most fruit, fruit is more than threshold
+
+	it can return null, because there could be no bushes that suit those requirements
+*/
 std::optional<uint16_t> TownHall::findBushToGather(uint8_t fruitThreshold) {
 
 	uint8_t maxFruit = 0;
 	uint8_t bushIndex = 0;
-
 	uint8_t counter = 0;
 
 	//loop through structures, and find bush with the most fruits
 	for (const auto& structure : m_simState.m_structures) {
-
 		if (structure->getType() == StructureType::Bush) { //only check bushes
+			
 			auto bushPtr = dynamic_cast<Bush*>(structure.get()); //reinterpret structure pointer to a bush pointer
-			if (bushPtr->getFruitAmount() > maxFruit && !bushPtr->checkClaim() && bushPtr->getFruitAmount() > fruitThreshold) { //if its the bigger amount, and bush is not claimed
+			if (isSuitableBush(maxFruit,fruitThreshold,bushPtr)) { //if its the bigger amount, and bush is not claimed
 				maxFruit = bushPtr->getFruitAmount();
 				bushIndex = counter;
 			}
+
 		}
 		counter++;
 	}
@@ -64,12 +88,19 @@ std::optional<uint16_t> TownHall::findBushToGather(uint8_t fruitThreshold) {
 	else return std::nullopt;
 }
 
+bool TownHall::isSuitableBush(uint8_t maxFruit, uint8_t fruitThreshold, Bush* bushPtr) const {
+	return (bushPtr->getFruitAmount() > maxFruit && !bushPtr->checkClaim() && bushPtr->getFruitAmount() > fruitThreshold);
+}
+
+bool TownHall::isSuitableTree(uint8_t maxWood, uint8_t woodThreshold, Tree* treePtr) const {
+	return (treePtr->getWoodAmount() > maxWood && !treePtr->checkClaim() && treePtr->getWoodAmount() > woodThreshold);
+}
+
 //1:1 copy of findBushToGather
 std::optional<uint16_t> TownHall::findTreeToGather(uint8_t woodThreshold) {
 
 	uint8_t maxWood = 0;
 	uint8_t treeIndex = 0;
-
 	uint8_t counter = 0;
 
 	//loop through structures, and find tree with the most wood
@@ -77,7 +108,7 @@ std::optional<uint16_t> TownHall::findTreeToGather(uint8_t woodThreshold) {
 
 		if (structure->getType() == StructureType::Tree) { //only check trees
 			auto treePtr = dynamic_cast<Tree*>(structure.get()); //reinterpret structure pointer to a tree pointer
-			if (treePtr->getWoodAmount() > maxWood && !treePtr->checkClaim() && treePtr->getWoodAmount() > woodThreshold) { //if its the bigger amount, and tree is not claimed
+			if (isSuitableTree(maxWood,woodThreshold,treePtr)) { //if its the bigger amount, and tree is not claimed
 				maxWood = treePtr->getWoodAmount();
 				treeIndex = counter;
 			}
@@ -89,9 +120,12 @@ std::optional<uint16_t> TownHall::findTreeToGather(uint8_t woodThreshold) {
 	else return std::nullopt;
 }
 
+/*
+	find a grown-enough bush, a not busy entity, and delegate a task to gather that bush to entity
+*/
 void TownHall::delegateGatherBushTask() {
 
-	auto bushId = findBushToGather(3);
+	auto bushId = findBushToGather(k_GatherThresholdAmount);
 	if (!bushId) {
 		//std::cout << "no fruits to gather\n"; TODO: ADD TO LOGGER
 		return;
@@ -107,7 +141,7 @@ void TownHall::delegateGatherBushTask() {
 		std::make_unique<GatherFruitBushTask>(
 			bushId.value(),
 			m_simState),
-		10
+		k_GatherTaskPriority
 	};
 	m_simState.m_entities[entityIndex].delegateTask(std::move(tsk));
 	
@@ -115,10 +149,11 @@ void TownHall::delegateGatherBushTask() {
 	std::cout << "gathering fruits delegated, entityID: "<<entityId.value()<<" bushID: "<<bushId.value()<<" fruitCount: "<<+bushPtr->getFruitAmount()<<"\n";
 }
 
+
 //1:1 copy of delegateGatherBushTask
 void TownHall::delegateGatherWoodTreeTask() {
 
-	auto treeId = findTreeToGather(3);
+	auto treeId = findTreeToGather(k_GatherThresholdAmount);
 	if (!treeId) {
 		//std::cout << "no wood to gather\n"; TODO: ADD TO LOGGER
 		return;
@@ -128,13 +163,13 @@ void TownHall::delegateGatherWoodTreeTask() {
 		//std::cout << "no free entities\n"; TODO: ADD TO LOGGER
 		return;
 	}
-	auto entityIndex = getEntityVectorIndexByEntityId(entityId.value());
+	auto entityIndex = getEntityVectorIndexByEntityId(entityId.value()); //needed, because entityId != entity's index in a vector
 
 	PrioritizedTask tsk{
 		std::make_unique<GatherWoodTreeTask>(
 			treeId.value(),
 			m_simState),
-		10
+		k_GatherTaskPriority
 	};
 	m_simState.m_entities[entityIndex].delegateTask(std::move(tsk));
 
@@ -142,14 +177,16 @@ void TownHall::delegateGatherWoodTreeTask() {
 	std::cout << "gathering wood delegated, entityID: " << entityId.value() << " treeID: " << treeId.value() << " woodCount: " << +treePtr->getWoodAmount() << "\n";
 }
 
+/*
+	Each tick townhall should evaluate its needs, and delegate tasks to fullfill those needs
+*/
 void TownHall::tick(){
 	
-	if (tickCounter % 20 ==0) {
+	if (tickCounter % 200 == 0) {
 		delegateGatherBushTask();
 		delegateGatherWoodTreeTask();
 	}
 
-	//delegating tasks, for now its doing nothing
 	tickCounter++;
 }
 

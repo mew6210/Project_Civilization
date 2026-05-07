@@ -1,5 +1,14 @@
 #include "bush.hpp"
+
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <limits>
+
+
+namespace {
+	constexpr uint8_t k_TicksNeededToGrow = 100;
+	constexpr uint8_t k_FruitLimit = std::numeric_limits<uint8_t>::max();
+	constexpr sf::Color k_BushColor = sf::Color::Magenta;
+}
 
 /*
 	Currently renders a 1x1 bush as a 4x4 square
@@ -10,14 +19,17 @@ void Bush::render(sf::RenderWindow& win) {
 	
 	sf::RectangleShape shape{ sf::Vector2f{4,4} }; //shape created every frame, TODO: make it static or something like that
 	shape.setPosition(m_pos);
-	shape.setFillColor(sf::Color::Magenta);
+	shape.setFillColor(k_BushColor);
 
 	win.draw(shape);
 }
 
+/*
+	grows fruit on a bush, up to a point
+*/
 void Bush::tick(){
-	if (m_tickCounter % 100 == 0) {
-		if (m_fruitCount < std::numeric_limits<uint8_t>::max()) {
+	if (m_tickCounter % k_TicksNeededToGrow == 0) {
+		if (m_fruitCount < k_FruitLimit) {
 			++m_fruitCount;
 		}
 	}
@@ -25,11 +37,9 @@ void Bush::tick(){
 	m_tickCounter++;
 }
 
-Bush::Bush(sf::Vector2f pos): Structure(pos){
-	setType(StructureType::Bush);
-}
+Bush::Bush(sf::Vector2f pos): Structure(pos){}
 
-bool Bush::claim() const {
+bool Bush::claim() {
 	if (m_isClaimed) return false;
 	else { 
 		m_isClaimed = true;
