@@ -28,3 +28,11 @@ void Bush::tick(){
 Bush::Bush(sf::Vector2f pos): Structure(pos){
 	setType(StructureType::Bush);
 }
+
+bool Bush::claim() const {
+	if (m_isClaimed) return false;
+	else { 
+		m_isClaimed = true;
+		return true;
+	}
+}

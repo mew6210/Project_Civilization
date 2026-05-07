@@ -12,7 +12,7 @@ struct EntityState {
 	const uint32_t m_id = 0;	//TODO: ADD MORE STUFF LIKE AGE, NAME, HUNGER, GENDER
 	uint16_t m_posX = 0;
 	uint16_t m_posY = 0;
-	bool isBusy = false;
+	bool m_isBusy = false;
 	const SimulationState& m_wState;
 
 	EntityState(const SimulationState& wState) : m_wState(wState),m_id(++ID) {}
