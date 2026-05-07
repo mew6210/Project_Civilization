@@ -13,7 +13,7 @@ class Bush : public Structure {
 public:
 	bool claim() const;
 	void unclaim() { m_isClaimed = false; }
-	bool getClaim() const { return m_isClaimed; }
+	bool checkClaim() const { return m_isClaimed; }
 	uint8_t getFruitAmount() const { return m_fruitCount; }
 	void clearFruitAmount() const { m_fruitCount = 0; }
 	void render(sf::RenderWindow&) override;

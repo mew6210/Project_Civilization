@@ -52,7 +52,7 @@ std::optional<uint16_t> TownHall::findBushToGather(uint8_t fruitThreshold) {
 
 		if (structure->getType() == StructureType::Bush) { //only check bushes
 			auto bushPtr = dynamic_cast<Bush*>(structure.get()); //reinterpret structure pointer to a bush pointer
-			if (bushPtr->getFruitAmount() > maxFruit && !bushPtr->getClaim() && bushPtr->getFruitAmount() > fruitThreshold) { //if its the bigger amount, and bush is not claimed
+			if (bushPtr->getFruitAmount() > maxFruit && !bushPtr->checkClaim() && bushPtr->getFruitAmount() > fruitThreshold) { //if its the bigger amount, and bush is not claimed
 				maxFruit = bushPtr->getFruitAmount();
 				bushIndex = counter;
 			}
@@ -61,6 +61,31 @@ std::optional<uint16_t> TownHall::findBushToGather(uint8_t fruitThreshold) {
 	}
 
 	if (bushIndex != 0) return bushIndex;
+	else return std::nullopt;
+}
+
+//1:1 copy of findBushToGather
+std::optional<uint16_t> TownHall::findTreeToGather(uint8_t woodThreshold) {
+
+	uint8_t maxWood = 0;
+	uint8_t treeIndex = 0;
+
+	uint8_t counter = 0;
+
+	//loop through structures, and find tree with the most wood
+	for (const auto& structure : m_simState.m_structures) {
+
+		if (structure->getType() == StructureType::Tree) { //only check trees
+			auto treePtr = dynamic_cast<Tree*>(structure.get()); //reinterpret structure pointer to a tree pointer
+			if (treePtr->getWoodAmount() > maxWood && !treePtr->checkClaim() && treePtr->getWoodAmount() > woodThreshold) { //if its the bigger amount, and tree is not claimed
+				maxWood = treePtr->getWoodAmount();
+				treeIndex = counter;
+			}
+		}
+		counter++;
+	}
+
+	if (treeIndex != 0) return treeIndex;
 	else return std::nullopt;
 }
 
@@ -90,10 +115,38 @@ void TownHall::delegateGatherBushTask() {
 	std::cout << "gathering fruits delegated, entityID: "<<entityId.value()<<" bushID: "<<bushId.value()<<" fruitCount: "<<+bushPtr->getFruitAmount()<<"\n";
 }
 
+//1:1 copy of delegateGatherBushTask
+void TownHall::delegateGatherWoodTreeTask() {
+
+	auto treeId = findTreeToGather(3);
+	if (!treeId) {
+		//std::cout << "no wood to gather\n"; TODO: ADD TO LOGGER
+		return;
+	}
+	auto entityId = findNotBusyEntityId();
+	if (!entityId) {
+		//std::cout << "no free entities\n"; TODO: ADD TO LOGGER
+		return;
+	}
+	auto entityIndex = getEntityVectorIndexByEntityId(entityId.value());
+
+	PrioritizedTask tsk{
+		std::make_unique<GatherWoodTreeTask>(
+			treeId.value(),
+			m_simState),
+		10
+	};
+	m_simState.m_entities[entityIndex].delegateTask(std::move(tsk));
+
+	auto treePtr = reinterpret_cast<Tree*>(m_simState.m_structures[treeId.value()].get());
+	std::cout << "gathering wood delegated, entityID: " << entityId.value() << " treeID: " << treeId.value() << " woodCount: " << +treePtr->getWoodAmount() << "\n";
+}
+
 void TownHall::tick(){
 	
-	if (tickCounter % 200 ==0) {
+	if (tickCounter % 20 ==0) {
 		delegateGatherBushTask();
+		delegateGatherWoodTreeTask();
 	}
 
 	//delegating tasks, for now its doing nothing

@@ -70,3 +70,53 @@ void GatherFruitBushTask::tick(EntityState& ent) {
 	}
 	
 }
+
+//copied 1:1 from bush tick
+void GatherWoodTreeTask::tick(EntityState& ent) {
+
+	if (!m_isDone) {
+		if (m_actionStep == 0) {
+			if (!m_actions[0]->m_isDone)
+				m_actions[0]->tick(ent);
+			else m_actionStep = 1;
+		}
+
+		if (m_actionStep == 1) {
+			if (!m_actions[1]->m_isDone)
+				m_actions[1]->tick(ent);
+			else {
+				m_isDone = true;
+				unclaimTree(ent.m_wState);
+				removeWoodFromTree(ent.m_wState);
+				//TODO: add to inventory collected wood
+			}
+		}
+	}
+
+}
+//copied 1:1 from unclaimBush
+void GatherWoodTreeTask::unclaimTree(const SimulationState& simState) const{
+
+	auto treeTemp = dynamic_cast<Tree*>(simState.m_structures[m_treeIndex].get());
+
+	treeTemp->unclaim();
+}
+
+//copied 1:1 from removeFruitFromBush
+void GatherWoodTreeTask::removeWoodFromTree(const SimulationState& simState) const{
+	auto treeTemp = dynamic_cast<Tree*>(simState.m_structures[m_treeIndex].get());
+
+	std::cout << "gathered " << +treeTemp->getWoodAmount() << " wood" << " from treeId: " << m_treeIndex << "\n";
+	treeTemp->clearWoodAmount();
+}
+
+//copied 1:1 from bush ctr
+GatherWoodTreeTask::GatherWoodTreeTask(uint16_t treeIndex, SimulationState& simState): m_treeIndex(treeIndex){
+	
+	auto treeTemp = dynamic_cast<Tree*>(simState.m_structures[m_treeIndex].get());
+
+	if (!treeTemp->claim()) m_isDone = false;
+
+	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(treeTemp->m_pos.x), uint16_t(treeTemp->m_pos.y)));
+	m_actions.push_back(std::make_unique<WaitAction>(treeTemp->getWoodAmount() * 10)); //gather one wood in half a second
+}

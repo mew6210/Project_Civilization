@@ -4,6 +4,7 @@
 #include "../entitystate/entitystate.hpp"
 #include "action/action.hpp"
 #include "../../structure/bush/bush.hpp"
+#include "../../structure/tree/tree.hpp"
 
 /*
 	Represents a job that an entity can be doing.
@@ -32,4 +33,14 @@ class GatherFruitBushTask : public Task {
 public:
 
 	GatherFruitBushTask(uint16_t bsInd,SimulationState&);
+};
+
+class GatherWoodTreeTask : public Task {
+	uint16_t m_treeIndex;
+
+	void tick(EntityState& entState) override;
+	void unclaimTree(const SimulationState& simState) const;
+	void removeWoodFromTree(const SimulationState& simState) const;
+public:
+	GatherWoodTreeTask(uint16_t treeIndex, SimulationState&);
 };

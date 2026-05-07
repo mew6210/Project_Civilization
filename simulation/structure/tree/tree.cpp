@@ -28,3 +28,17 @@ void Tree::tick() {
 Tree::Tree(sf::Vector2f pos) : Structure(pos) {
 	setType(StructureType::Tree);
 }
+
+bool Tree::claim() {
+	
+	if (m_isClaimed) return false;
+	else {
+		m_isClaimed = true;
+		return true;
+	}
+
+}
+void Tree::unclaim() { m_isClaimed = false; }
+bool Tree::checkClaim() const { return m_isClaimed; }
+uint8_t Tree::getWoodAmount() const { return m_woodCount; }
+void Tree::clearWoodAmount() { m_woodCount = 0; }
