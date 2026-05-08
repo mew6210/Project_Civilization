@@ -119,12 +119,27 @@ void GatherWoodTreeTask::tick(EntityState& ent) {
 			if (!m_actions[1]->m_isDone)
 				m_actions[1]->tick(ent);
 			else {
-				m_isDone = true;
 				unclaimTree(ent.m_wState);
-				removeWoodFromTree(ent.m_wState);
-				//TODO: add to inventory collected wood
+				Item wood = getWoodFromTree(ent.m_wState);
+				ent.m_haul = wood;
+				m_actionStep = 2;
 			}
 		}
+
+		if (m_actionStep == 2) {
+			if (!m_actions[2]->m_isDone)
+				m_actions[2]->tick(ent);
+			else m_actionStep = 3;
+		}
+
+		if (m_actionStep == 3) {
+			if (!m_actions[3]->m_isDone)
+				m_actions[3]->tick(ent);
+			else {
+				m_isDone = true;
+			}
+		}
+
 	}
 
 }
@@ -136,21 +151,41 @@ void GatherWoodTreeTask::unclaimTree(const SimulationState& simState) const{
 	treeTemp->unclaim();
 }
 
+ItemType TreeTypeToItemType(TreeType treeType){
+	switch (treeType){
+	case TreeType::Oak:
+		return ItemType::Oak;
+
+	case TreeType::Spruce:
+		return ItemType::Spruce;
+
+	case TreeType::Birch:
+		return ItemType::Birch;
+
+	default:
+		return ItemType::Null;
+	}
+}
+
 //copied 1:1 from removeFruitFromBush
-void GatherWoodTreeTask::removeWoodFromTree(const SimulationState& simState) const{
+Item GatherWoodTreeTask::getWoodFromTree(const SimulationState& simState) const{
 	auto treeTemp = dynamic_cast<Tree*>(simState.m_structures[m_treeIndex].get());
 
 	std::cout << "gathered " << +treeTemp->getWoodAmount() << " wood" << " from treeId: " << m_treeIndex << "\n";
+	Item item = {TreeTypeToItemType(treeTemp->getTreeType()),treeTemp->getWoodAmount()};
 	treeTemp->clearWoodAmount();
+	return item;
 }
 
 //copied 1:1 from bush ctr
 GatherWoodTreeTask::GatherWoodTreeTask(uint16_t treeIndex, SimulationState& simState): m_treeIndex(treeIndex){
-	
+	auto townHallPos = simState.m_structures[0]->m_pos;
 	auto treeTemp = dynamic_cast<Tree*>(simState.m_structures[m_treeIndex].get());
 
 	if (!treeTemp->claim()) m_isDone = false;
 
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(treeTemp->m_pos.x), uint16_t(treeTemp->m_pos.y)));
 	m_actions.push_back(std::make_unique<WaitAction>(treeTemp->getWoodAmount() * 10)); //gather one wood in half a second
+	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x),uint16_t(townHallPos.y)));
+	m_actions.push_back(std::make_unique<DumpToStorageAction>());
 }

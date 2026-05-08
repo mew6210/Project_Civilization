@@ -13,9 +13,10 @@ public:
 	void unclaim();
 	bool checkClaim() const;
 	uint8_t getWoodAmount() const;
+	TreeType getTreeType() const { return m_TreeType; }
 	void clearWoodAmount();
 	void render(sf::RenderWindow&) override;
 	void tick() override;
-	Tree(sf::Vector2f);
+	Tree(sf::Vector2f,TreeType);
 	StructureType getType() const override { return StructureType::Tree; }
 };

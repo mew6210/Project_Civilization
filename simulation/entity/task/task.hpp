@@ -30,7 +30,6 @@ class GatherFruitBushTask : public Task {
 	void tick(EntityState& entState) override;
 	void unclaimBush(const SimulationState& simState) const;
 	Item getFruitsFromBush(const SimulationState& simState) const;
-	Item getFruit(const SimulationState& simState);
 public:
 
 	GatherFruitBushTask(uint16_t bsInd,SimulationState&);
@@ -41,7 +40,7 @@ class GatherWoodTreeTask : public Task {
 
 	void tick(EntityState& entState) override;
 	void unclaimTree(const SimulationState& simState) const;
-	void removeWoodFromTree(const SimulationState& simState) const;
+	Item getWoodFromTree(const SimulationState& simState) const;
 public:
 	GatherWoodTreeTask(uint16_t treeIndex, SimulationState&);
 };

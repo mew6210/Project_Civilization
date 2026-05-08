@@ -32,7 +32,7 @@ void Tree::tick() {
 	m_tickCounter++;
 }
 
-Tree::Tree(sf::Vector2f pos) : Structure(pos) {}
+Tree::Tree(sf::Vector2f pos,TreeType treeType) : Structure(pos),m_TreeType(treeType) {}
 
 bool Tree::claim() {
 	

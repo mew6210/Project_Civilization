@@ -39,14 +39,28 @@ BushType bushTypeFromInt(int value) {
 	}
 }
 
+TreeType treeTypeFromInt(int value) {
+	switch (value) {
+	case 0: return TreeType::Oak;
+	case 1: return TreeType::Spruce;
+	case 2: return TreeType::Birch;
+	default: return TreeType::Null;
+	}
+}
+
 void SimulationState::addStructure(sf::Vector2f pos, StructureType type) {
 
 	if (type == StructureType::Bush) {
 		int variant = std::uniform_int_distribution<int>(0, 2)(rng);
 		BushType type = bushTypeFromInt(variant);
 
-		m_structures.push_back(std::make_unique<Bush>(pos,type));
+		m_structures.push_back(std::make_unique<Bush>(pos, type));
 	}
-	if (type == StructureType::Tree) m_structures.push_back(std::make_unique<Tree>(pos));
+	if (type == StructureType::Tree){
+		int variant = std::uniform_int_distribution<int>(0, 2)(rng);
+		TreeType type = treeTypeFromInt(variant);
+
+		m_structures.push_back(std::make_unique<Tree>(pos,type));
+	}
 	if (type == StructureType::TownHall) m_structures.push_back(std::make_unique<TownHall>(pos, *this));
 }
