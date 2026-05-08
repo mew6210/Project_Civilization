@@ -1,12 +1,13 @@
 #include "../structure.hpp"
 #include "../../simulationstate/simulationstate.hpp"
+#include "storage/storage.hpp"
 
 class TownHall : public Structure {
 
 	uint64_t tickCounter = 1;
 
 	SimulationState& m_simState;
-	//Inventory inv = {};
+	Storage inv = {};
 
 
 	//bush-related
