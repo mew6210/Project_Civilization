@@ -1,8 +1,10 @@
 #pragma once
+#include <random>
 #include "../mapsize/mapsize.hpp"
 #include "../../map/mapData/tile.hpp"
 #include "../../map/mapData/mapdata.hpp"
-#include <random>
+#include "../structure/structure.hpp"
+#include "../entity/entity.hpp"
 
 /*
 	Holds everything needed for simulation regarding world state
@@ -11,17 +13,21 @@
 
 	Is shared by entities, should only be passed by const reference
 */
-class WorldState {
+class SimulationState {
 
 	MapSize mapSize;
 	std::vector<std::vector<TileType>> m_tileGrid = {};
+	
  	mutable std::mt19937 rng;
 
 	void initTileGrid(const MapData&);
 public:
 
+	std::vector<std::unique_ptr<Structure>> m_structures = {};
+	std::vector<Entity> m_entities = {};
+
 	MapSize getMapSize() const { return mapSize; }
 	int getRandInt(int min, int max) const;
-
-	WorldState(const MapData&);
+	void addStructure(sf::Vector2f, StructureType);
+	SimulationState(const MapData&);
 };

@@ -21,3 +21,10 @@ void MoveToAction::tick(EntityState& entState) {
 	}
 
 }
+
+void WaitAction::tick(EntityState&) {
+	if (m_curTick < m_tickAmount) {
+		m_curTick++;
+	}
+	else m_isDone = true;
+}

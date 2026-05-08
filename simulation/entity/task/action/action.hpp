@@ -1,3 +1,4 @@
+#pragma once
 #include "../../entitystate/entitystate.hpp"
 #include <cstdint>
 
@@ -19,9 +20,17 @@ struct MoveToAction : public Action {
 	uint16_t m_DestinationX;
 	uint16_t m_DestinationY;
 
-	MoveToAction(EntityState& e, uint16_t destinationX, uint16_t destinationY) :
+	MoveToAction(uint16_t destinationX, uint16_t destinationY) :
 		m_DestinationX(destinationX),
 		m_DestinationY(destinationY) {
 	}
+	void tick(EntityState&) override;
+};
+
+struct WaitAction : public Action {
+	uint64_t m_tickAmount;
+	uint64_t m_curTick = 0;
+
+	WaitAction(uint64_t tickAmount):m_tickAmount(tickAmount){}
 	void tick(EntityState&) override;
 };
