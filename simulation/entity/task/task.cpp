@@ -26,12 +26,16 @@ void WanderRandTask::tick(EntityState& entState) {
 }
 
 GatherFruitBushTask::GatherFruitBushTask(uint16_t bsInd,SimulationState& simState) : m_bushIndex(bsInd) {
+	auto townHallPos = simState.m_structures[0]->m_pos;
 	auto bushTemp = dynamic_cast<Bush*>(simState.m_structures[m_bushIndex].get());
 	
 	if (!bushTemp->claim()) m_isDone = false;
 
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(bushTemp->m_pos.x),uint16_t(bushTemp->m_pos.y)));
 	m_actions.push_back(std::make_unique<WaitAction>(bushTemp->getFruitAmount() * 10)); //gather one fruit in half a second
+	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y))); //go to townhall
+	m_actions.push_back(std::make_unique<DumpToStorageAction>()); //dump berries to storage
+
 }
 
 void GatherFruitBushTask::unclaimBush(const SimulationState& simState) const {
@@ -40,14 +44,29 @@ void GatherFruitBushTask::unclaimBush(const SimulationState& simState) const {
 	bushTemp->unclaim();
 }
 
-void GatherFruitBushTask::removeFruitsFromBush(const SimulationState& simState) const {
+ItemType BushTypeToItemType(BushType type) {
+
+	switch (type) {
+	case BushType::Strawberry: return ItemType::Strawberry;
+	case BushType::Blueberry: return ItemType::Blueberry;
+	case BushType::Raspberry: return ItemType::Raspberry;
+	case BushType::Null: return ItemType::Blueberry;
+	}
+
+}
+
+Item GatherFruitBushTask::getFruitsFromBush(const SimulationState& simState) const {
 	auto bushTemp = dynamic_cast<Bush*>(simState.m_structures[m_bushIndex].get());
+
+	Item item = Item{ BushTypeToItemType(bushTemp->getBushType()),bushTemp->getFruitAmount()}; //TODO: Make it work for other bushes types
 
 	std::cout << "gathered " << +bushTemp->getFruitAmount()<<" fruit" <<" from bushId: "<<m_bushIndex << "\n";
 	bushTemp->clearFruitAmount();
 	
+	return item;
 }
 
+//there HAS to be a better way to do it, but why bother
 void GatherFruitBushTask::tick(EntityState& ent) {
 
 	if (!m_isDone) {
@@ -61,12 +80,27 @@ void GatherFruitBushTask::tick(EntityState& ent) {
 			if (!m_actions[1]->m_isDone)
 				m_actions[1]->tick(ent);
 			else { 
-				m_isDone = true; 
 				unclaimBush(ent.m_wState);
-				removeFruitsFromBush(ent.m_wState);
-				//TODO: add to inventory collected fruit
+				Item fruits = getFruitsFromBush(ent.m_wState);
+				ent.m_haul = fruits;
+				m_actionStep = 2;
 			}
 		}
+		
+		if (m_actionStep == 2) {
+			if (!m_actions[2]->m_isDone)
+				m_actions[2]->tick(ent);
+			else m_actionStep = 3;
+		}
+
+		if (m_actionStep == 3) {
+			if (!m_actions[3]->m_isDone)
+				m_actions[3]->tick(ent);
+			else {
+				m_isDone = true;
+			}
+		}
+
 	}
 	
 }

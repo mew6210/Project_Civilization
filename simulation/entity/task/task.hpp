@@ -29,7 +29,8 @@ class GatherFruitBushTask : public Task {
 	uint16_t m_bushIndex;
 	void tick(EntityState& entState) override;
 	void unclaimBush(const SimulationState& simState) const;
-	void removeFruitsFromBush(const SimulationState& simState) const;
+	Item getFruitsFromBush(const SimulationState& simState) const;
+	Item getFruit(const SimulationState& simState);
 public:
 
 	GatherFruitBushTask(uint16_t bsInd,SimulationState&);

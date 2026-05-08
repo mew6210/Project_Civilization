@@ -37,7 +37,7 @@ void Bush::tick(){
 	m_tickCounter++;
 }
 
-Bush::Bush(sf::Vector2f pos): Structure(pos){}
+Bush::Bush(sf::Vector2f pos,BushType bushType): Structure(pos),m_BushType(bushType){}
 
 bool Bush::claim() {
 	if (m_isClaimed) return false;

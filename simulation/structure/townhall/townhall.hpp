@@ -7,8 +7,7 @@ class TownHall : public Structure {
 	uint64_t tickCounter = 1;
 
 	SimulationState& m_simState;
-	Storage inv = {};
-
+	
 
 	//bush-related
 	std::optional<uint16_t> findBushToGather(uint8_t);
@@ -25,6 +24,9 @@ class TownHall : public Structure {
 	bool isSuitableTree(uint8_t, uint8_t,Tree*) const;
 
 public:
+
+	Storage inv = {};
+
 	void render(sf::RenderWindow&) override;
 	void tick() override;
 	TownHall(sf::Vector2f, SimulationState&);

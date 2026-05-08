@@ -1,4 +1,5 @@
 #include "storage.hpp"
+#include <iostream>
 
 std::optional<size_t> Storage::doesItemTypeExist(ItemType type) {
 	for (size_t i = 0; i < m_items.size(); i++) {
@@ -19,6 +20,7 @@ void Storage::insertItems(Item i){
 		m_items[index.value()].count += i.count;
 	}
 
+	std::cout << "inserted "<<i.count<<" items\n";
 }
 
 bool Storage::requestItems(EntityState& ent, Item i) {
