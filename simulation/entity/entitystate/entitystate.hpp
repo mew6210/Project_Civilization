@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "../../item/item.hpp"
 
 class SimulationState;
 
@@ -13,6 +14,7 @@ struct EntityState {
 	uint16_t m_posX = 0;
 	uint16_t m_posY = 0;
 	bool m_isBusy = false;
+	Item m_haul;
 	const SimulationState& m_wState;
 
 	EntityState(const SimulationState& wState) : m_wState(wState),m_id(++ID) {}

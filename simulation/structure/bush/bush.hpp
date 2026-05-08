@@ -13,9 +13,10 @@ public:
 	void unclaim() { m_isClaimed = false; }
 	bool checkClaim() const { return m_isClaimed; }
 	uint8_t getFruitAmount() const { return m_fruitCount; }
+	BushType getBushType() const { return m_BushType; }
 	void clearFruitAmount() { m_fruitCount = 0; }
 	void render(sf::RenderWindow&) override;
 	void tick() override;
-	Bush(sf::Vector2f);
+	Bush(sf::Vector2f,BushType);
 	StructureType getType() const override { return StructureType::Bush; }
 };

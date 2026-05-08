@@ -4,7 +4,7 @@
 
 //file-specific globals
 namespace {
-	constexpr uint8_t k_GatherThresholdAmount = 8;
+	constexpr uint8_t k_GatherThresholdAmount = 2;
 	constexpr uint8_t k_GatherTaskPriority = 10;
 	constexpr sf::Color k_TownHallColor = sf::Color(229, 232, 23);
 }
@@ -182,7 +182,7 @@ void TownHall::delegateGatherWoodTreeTask() {
 */
 void TownHall::tick(){
 	
-	if (tickCounter % 200 == 0) {
+	if (tickCounter % 20 == 0) {
 		delegateGatherBushTask();
 		delegateGatherWoodTreeTask();
 	}

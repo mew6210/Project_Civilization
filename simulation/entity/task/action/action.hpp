@@ -34,3 +34,7 @@ struct WaitAction : public Action {
 	WaitAction(uint64_t tickAmount):m_tickAmount(tickAmount){}
 	void tick(EntityState&) override;
 };
+
+struct DumpToStorageAction : public Action {	//TODO: assumes that u just dump everything u have, will probably have to be changed later
+	void tick(EntityState&) override;
+};
