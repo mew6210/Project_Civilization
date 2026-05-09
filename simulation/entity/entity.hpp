@@ -14,7 +14,7 @@ class SimulationState;
 */
 struct Entity {
 	mutable EntityState m_entState;
-
+	uint64_t m_tickCounter = 0;
 	mutable std::vector<PrioritizedTask> m_tasks = {};
 	uint16_t m_curTask = 0;
 
@@ -23,4 +23,8 @@ struct Entity {
 	void render(sf::RenderWindow& window) const;
 	void sim();
 	void delegateTask(PrioritizedTask tsk) const;
+
+private:
+	void doCurrentTask();
+	void updateStats();
 };

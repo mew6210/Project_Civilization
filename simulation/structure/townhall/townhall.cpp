@@ -30,7 +30,7 @@ void TownHall::render(sf::RenderWindow& win){
 uint16_t TownHall::getEntityVectorIndexByEntityId(uint16_t id) {
 
 	for (uint16_t i = 0; i < m_simState.m_entities.size(); i++) {
-		if (id == m_simState.m_entities[i].m_entState.m_id) return i;
+		if (id == m_simState.m_entities[i]->m_entState.m_id) return i;
 	}
 
 }
@@ -46,9 +46,9 @@ std::optional<uint16_t> TownHall::findNotBusyEntityId() {
 	
 	for (const auto& ent : m_simState.m_entities) {
 
-		if (ent.m_tasks.size() == 1) {
-			if (ent.m_tasks[0].priority == 0) {		//if it has only one task, and is wandering around
-				entityId = ent.m_entState.m_id;
+		if (ent->m_tasks.size() == 1) {
+			if (ent->m_tasks[0].priority == 0) {		//if it has only one task, and is wandering around
+				entityId = ent->m_entState.m_id;
 			}
 		}
 	}
@@ -143,7 +143,7 @@ void TownHall::delegateGatherBushTask() {
 			m_simState),
 		k_GatherTaskPriority
 	};
-	m_simState.m_entities[entityIndex].delegateTask(std::move(tsk));
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk));
 	
 	auto bushPtr = reinterpret_cast<Bush*>(m_simState.m_structures[bushId.value()].get());
 	std::cout << "gathering fruits delegated, entityID: "<<entityId.value()<<" bushID: "<<bushId.value()<<" fruitCount: "<<+bushPtr->getFruitAmount()<<"\n";
@@ -171,7 +171,7 @@ void TownHall::delegateGatherWoodTreeTask() {
 			m_simState),
 		k_GatherTaskPriority
 	};
-	m_simState.m_entities[entityIndex].delegateTask(std::move(tsk));
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk));
 
 	auto treePtr = reinterpret_cast<Tree*>(m_simState.m_structures[treeId.value()].get());
 	std::cout << "gathering wood delegated, entityID: " << entityId.value() << " treeID: " << treeId.value() << " woodCount: " << +treePtr->getWoodAmount() << "\n";
