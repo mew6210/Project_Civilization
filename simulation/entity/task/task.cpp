@@ -60,7 +60,7 @@ Item GatherFruitBushTask::getFruitsFromBush(const SimulationState& simState) con
 
 	Item item = Item{ BushTypeToItemType(bushTemp->getBushType()),bushTemp->getFruitAmount()}; //TODO: Make it work for other bushes types
 
-	std::cout << "gathered " << +bushTemp->getFruitAmount()<<" fruit" <<" from bushId: "<<m_bushIndex << "\n";
+	//std::cout << "gathered " << +bushTemp->getFruitAmount()<<" fruit" <<" from bushId: "<<m_bushIndex << "\n";
 	bushTemp->clearFruitAmount();
 	
 	return item;
@@ -171,7 +171,7 @@ ItemType TreeTypeToItemType(TreeType treeType){
 Item GatherWoodTreeTask::getWoodFromTree(const SimulationState& simState) const{
 	auto treeTemp = dynamic_cast<Tree*>(simState.m_structures[m_treeIndex].get());
 
-	std::cout << "gathered " << +treeTemp->getWoodAmount() << " wood" << " from treeId: " << m_treeIndex << "\n";
+	//std::cout << "gathered " << +treeTemp->getWoodAmount() << " wood" << " from treeId: " << m_treeIndex << "\n";
 	Item item = {TreeTypeToItemType(treeTemp->getTreeType()),treeTemp->getWoodAmount()};
 	treeTemp->clearWoodAmount();
 	return item;
@@ -188,4 +188,44 @@ GatherWoodTreeTask::GatherWoodTreeTask(uint16_t treeIndex, SimulationState& simS
 	m_actions.push_back(std::make_unique<WaitAction>(treeTemp->getWoodAmount() * 10)); //gather one wood in half a second
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x),uint16_t(townHallPos.y)));
 	m_actions.push_back(std::make_unique<DumpToStorageAction>());
+}
+
+
+GetFoodAndEatTask::GetFoodAndEatTask(SimulationState& simState) {
+	auto townHallPos = simState.m_structures[0]->m_pos;
+
+	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y)));
+	m_actions.push_back(std::make_unique<GetItemFromStorageAction>(ItemCategory::Food,10));
+	m_actions.push_back(std::make_unique<ConsumeHaulAction>());
+}
+void GetFoodAndEatTask::tick(EntityState& ent) {
+	
+	if (!m_isDone) {
+		if (m_actionStep == 0) {
+			if (!m_actions[0]->m_isDone)
+				m_actions[0]->tick(ent);
+			else m_actionStep = 1;
+		}
+
+		if (m_actionStep == 1) {
+			if (!m_actions[1]->m_isDone)
+				m_actions[1]->tick(ent);
+			else {
+				auto act = reinterpret_cast<GetItemFromStorageAction*>(m_actions[1].get());
+				if (act->m_isFound == false) {	//if u havent found food, dont try to consume it
+					m_isDone = true;
+				}
+				else {
+					m_actionStep = 2; //else try to consume it
+				}
+				
+			}
+		}
+
+		if (m_actionStep == 2) {
+			if (!m_actions[2]->m_isDone)
+				m_actions[2]->tick(ent);
+			else m_isDone = true;
+		}
+	}
 }

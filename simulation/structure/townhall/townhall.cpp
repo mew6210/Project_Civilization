@@ -4,7 +4,7 @@
 
 //file-specific globals
 namespace {
-	constexpr uint8_t k_GatherThresholdAmount = 2;
+	constexpr uint8_t k_GatherThresholdAmount = 8;
 	constexpr uint8_t k_GatherTaskPriority = 10;
 	constexpr sf::Color k_TownHallColor = sf::Color(229, 232, 23);
 }
@@ -30,7 +30,7 @@ void TownHall::render(sf::RenderWindow& win){
 uint16_t TownHall::getEntityVectorIndexByEntityId(uint16_t id) {
 
 	for (uint16_t i = 0; i < m_simState.m_entities.size(); i++) {
-		if (id == m_simState.m_entities[i].m_entState.m_id) return i;
+		if (id == m_simState.m_entities[i]->m_entState.m_id) return i;
 	}
 
 }
@@ -46,9 +46,9 @@ std::optional<uint16_t> TownHall::findNotBusyEntityId() {
 	
 	for (const auto& ent : m_simState.m_entities) {
 
-		if (ent.m_tasks.size() == 1) {
-			if (ent.m_tasks[0].priority == 0) {		//if it has only one task, and is wandering around
-				entityId = ent.m_entState.m_id;
+		if (ent->m_tasks.size() == 1) {
+			if (ent->m_tasks[0].priority == 0) {		//if it has only one task, and is wandering around
+				entityId = ent->m_entState.m_id;
 			}
 		}
 	}
@@ -143,10 +143,10 @@ void TownHall::delegateGatherBushTask() {
 			m_simState),
 		k_GatherTaskPriority
 	};
-	m_simState.m_entities[entityIndex].delegateTask(std::move(tsk));
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk),false);
 	
 	auto bushPtr = reinterpret_cast<Bush*>(m_simState.m_structures[bushId.value()].get());
-	std::cout << "gathering fruits delegated, entityID: "<<entityId.value()<<" bushID: "<<bushId.value()<<" fruitCount: "<<+bushPtr->getFruitAmount()<<"\n";
+	std::cout << "gather fruit, entID: "<<entityId.value()<<" strID: "<<bushId.value()<<"\n";
 }
 
 
@@ -171,10 +171,10 @@ void TownHall::delegateGatherWoodTreeTask() {
 			m_simState),
 		k_GatherTaskPriority
 	};
-	m_simState.m_entities[entityIndex].delegateTask(std::move(tsk));
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk),false);
 
 	auto treePtr = reinterpret_cast<Tree*>(m_simState.m_structures[treeId.value()].get());
-	std::cout << "gathering wood delegated, entityID: " << entityId.value() << " treeID: " << treeId.value() << " woodCount: " << +treePtr->getWoodAmount() << "\n";
+	std::cout << "gather wood, entID: " << entityId.value() << " strID: " << treeId.value() << "\n";
 }
 
 /*
@@ -190,4 +190,12 @@ void TownHall::tick(){
 	tickCounter++;
 }
 
-TownHall::TownHall(sf::Vector2f pos, SimulationState& simState): Structure(pos),m_simState(simState) {}
+void TownHall::addStartingItems() {
+	inv.insertItems(Item{ ItemType::Blueberry,30 });
+	inv.insertItems(Item{ ItemType::Strawberry,30 });
+	inv.insertItems(Item{ ItemType::Raspberry,30 });
+}
+
+TownHall::TownHall(sf::Vector2f pos, SimulationState& simState): Structure(pos),m_simState(simState) {
+	addStartingItems();
+}

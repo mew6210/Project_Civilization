@@ -19,6 +19,8 @@ class Simulation {
 
 	void renderEntities(sf::RenderWindow&);
 	void renderStructures(sf::RenderWindow&);
+	void simulateEntities();
+	void simulateStructures();
 public:
 	
 	Simulation(const MapData& md);

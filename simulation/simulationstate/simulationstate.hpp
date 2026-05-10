@@ -24,7 +24,7 @@ class SimulationState {
 public:
 
 	std::vector<std::unique_ptr<Structure>> m_structures = {};
-	std::vector<Entity> m_entities = {};
+	std::vector<std::unique_ptr<Entity>> m_entities = {};
 
 	MapSize getMapSize() const { return mapSize; }
 	int getRandInt(int min, int max) const;

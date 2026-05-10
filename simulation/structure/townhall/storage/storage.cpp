@@ -10,6 +10,24 @@ std::optional<size_t> Storage::doesItemTypeExist(ItemType type) {
 	return std::nullopt;
 }
 
+std::string itemTypeToString(ItemType t) {
+	switch (t) {
+		case ItemType::Strawberry: return "Strawberry";
+		case ItemType::Blueberry: return "Blueberry";
+		case ItemType::Raspberry: return "Raspberry";
+		case ItemType::Oak: return "Oak";
+		case ItemType::Spruce: return "Spruce";
+		case ItemType::Birch: return "Birch";
+		case ItemType::Null: return "Null";
+	}
+}
+
+void printInsert(Item i) {
+
+	std::cout << "storage += " << i.count << " " << itemTypeToString(i.type) << "\n";
+
+}
+
 void Storage::insertItems(Item i){
 	
 	auto index = doesItemTypeExist(i.type);
@@ -20,7 +38,8 @@ void Storage::insertItems(Item i){
 		m_items[index.value()].count += i.count;
 	}
 
-	std::cout << "inserted "<<i.count<<" items\n";
+
+	printInsert(i);
 }
 
 bool Storage::requestItems(EntityState& ent, Item i) {
@@ -37,4 +56,59 @@ bool Storage::requestItems(EntityState& ent, Item i) {
 		return true;
 	}
 
+}
+
+bool Storage::doesCategoryExist(ItemCategory cat) {
+	
+	if (cat == ItemCategory::Food) {
+		auto blueberries = doesItemTypeExist(ItemType::Blueberry);
+		auto strawberries= doesItemTypeExist(ItemType::Strawberry);
+		auto raspberries = doesItemTypeExist(ItemType::Raspberry);
+
+		if (blueberries || strawberries || raspberries) return true;
+		else return false;
+	}
+	if (cat == ItemCategory::Material) {
+		auto oakwood = doesItemTypeExist(ItemType::Oak);
+		auto sprucewood = doesItemTypeExist(ItemType::Spruce);
+		auto birchwood = doesItemTypeExist(ItemType::Birch);
+
+		if (oakwood || sprucewood || birchwood) return true;
+		else return false;
+	}
+
+	if (cat == ItemCategory::Specific) {
+		return false;
+	}
+	return false;
+}
+
+bool Storage::requestCategory(EntityState& ent, ItemCategory cat, uint64_t count) {
+	if (cat == ItemCategory::Food) {
+		auto blueberries = doesItemTypeExist(ItemType::Blueberry);
+		if (blueberries.has_value()) {
+			if (m_items[blueberries.value()].count > count) {
+				requestItems(ent, { ItemType::Blueberry,count });
+				return true;
+			}
+		}
+
+		auto strawberries = doesItemTypeExist(ItemType::Strawberry);
+		if (strawberries.has_value()) {
+			if (m_items[strawberries.value()].count > count) {
+				requestItems(ent, { ItemType::Strawberry,count });
+				return true;
+			}
+		}
+
+		auto raspberries = doesItemTypeExist(ItemType::Raspberry);
+		if (raspberries.has_value()) {
+			if (m_items[raspberries.value()].count > count) {
+				requestItems(ent, { ItemType::Raspberry,count });
+				return true;
+			}
+		}
+		return false;
+
+	}
 }

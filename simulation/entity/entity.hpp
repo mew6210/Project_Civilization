@@ -14,13 +14,28 @@ class SimulationState;
 */
 struct Entity {
 	mutable EntityState m_entState;
-
+	uint64_t m_tickCounter = 0;
 	mutable std::vector<PrioritizedTask> m_tasks = {};
 	uint16_t m_curTask = 0;
 
-	Entity(const SimulationState& wState) : m_entState(wState) {}
-	Entity(const SimulationState& wState, uint16_t posX, uint16_t posY) :m_entState(wState,posX,posY) {}
+	bool m_isAcceptingTasks = true;
+
+	Entity(SimulationState& wState) : m_entState(wState) {}
+	Entity(SimulationState& wState, uint16_t posX, uint16_t posY) :m_entState(wState,posX,posY) {}
 	void render(sf::RenderWindow& window) const;
 	void sim();
-	void delegateTask(PrioritizedTask tsk) const;
+	void delegateTask(PrioritizedTask tsk, bool) const;
+
+private:
+	void addHungryTask();
+	void doCurrentTask();
+	void updateStats();
+	void addTasks();
+	
+	void addTasksWhenSome();
+	void addTasksWhenNone();
+	void handleIsAcceptingTasks();
+	bool isHungry();
+	bool isStarving();
+	bool isFull();
 };

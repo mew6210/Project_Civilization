@@ -7,7 +7,9 @@ class Storage {
 	std::vector<Item> m_items;
 
 	std::optional<size_t> doesItemTypeExist(ItemType);
+	bool doesCategoryExist(ItemCategory);
 public:
 	void insertItems(Item);
 	bool requestItems(EntityState&, Item);
+	bool requestCategory(EntityState&,ItemCategory, uint64_t);
 };
