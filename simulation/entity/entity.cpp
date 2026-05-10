@@ -5,6 +5,7 @@
 namespace {
 	constexpr int k_HungerTickDecreaseCount = 20;
 	constexpr int k_HealthTickDecreaseFromHungerCount = 20;
+	constexpr int k_HealthTickIncreaseFromSatiationCount = 20;
 	constexpr int k_GoEatTaskPriority = 5;
 	constexpr int k_GoEatTaskCooldownTicks = 1;
 	constexpr int k_GoEatTaskSatiationLimit = 60;
@@ -43,6 +44,11 @@ void Entity::updateStats() {
 		m_entState.m_health != 0 && 
 		m_tickCounter % k_HealthTickDecreaseFromHungerCount == 0) m_entState.m_health--;
 	
+	if (m_entState.m_satiation > k_GoEatTaskSatiationLimit &&
+		m_entState.m_health != 100 &&
+		m_tickCounter % k_HealthTickIncreaseFromSatiationCount == 0) m_entState.m_health++;
+
+
 	if (m_entState.m_health == 0) m_entState.m_isDead = true;
 
 	m_tickCounter++;
