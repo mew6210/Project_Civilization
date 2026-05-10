@@ -54,3 +54,57 @@ void DumpToStorageAction::tick(EntityState& ent) {
 	ent.m_haul = {};
 	m_isDone = true;
 }
+
+void GetItemFromStorageAction::tick(EntityState& ent) {
+
+	auto townhallPtr= dynamic_cast<TownHall*>(ent.m_wState.m_structures[0].get());
+
+	if (m_itemCategory != ItemCategory::Specific) {
+		
+		auto res = townhallPtr->inv.requestCategory(ent, m_itemCategory, m_count);
+		if (!res) {
+			std::cout << "couldnt find enough of category\n";
+			m_isDone = true;
+			return;
+		}
+		else {
+			m_isDone = true;
+			m_isFound = true;
+			return;
+		}
+
+	}
+
+}
+
+namespace {
+	constexpr int foodSatiation = 10; //to be changed
+}
+
+void ConsumeHaulAction::tick(EntityState& ent) {
+
+	uint32_t foodAmount = ent.m_haul.count;
+
+	if (ent.m_haul.type == ItemType::Blueberry ||
+		ent.m_haul.type == ItemType::Strawberry ||
+		ent.m_haul.type == ItemType::Raspberry
+		) {
+		
+		ent.m_satiation += foodAmount * foodSatiation;
+		ent.m_haul = Item{ ItemType::Null,0 };
+		std::cout << "entId: " << ent.m_id << " eaten food, current satiation: " << ent.m_satiation << " current hp: " << ent.m_health<<"\n";
+		m_isDone = true;
+	}
+	else {
+		std::cout << "this cannot be eaten bro\n";
+		m_isDone = true;
+	}
+}
+
+GetItemFromStorageAction::GetItemFromStorageAction(ItemCategory itemCategory, uint64_t count): 
+	m_itemCategory(itemCategory),
+	m_count(count) {}
+GetItemFromStorageAction::GetItemFromStorageAction(ItemType itemType, uint64_t count): 
+	m_itemCategory(ItemCategory::Specific),
+	m_specificType(itemType),
+	m_count(count){}

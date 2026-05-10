@@ -12,3 +12,10 @@ enum class ItemType{
 
 	Null
 };
+
+enum class ItemCategory {
+	Food,
+	Material,
+	Specific,
+	Null
+};

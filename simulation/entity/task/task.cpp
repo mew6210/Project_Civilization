@@ -189,3 +189,43 @@ GatherWoodTreeTask::GatherWoodTreeTask(uint16_t treeIndex, SimulationState& simS
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x),uint16_t(townHallPos.y)));
 	m_actions.push_back(std::make_unique<DumpToStorageAction>());
 }
+
+
+GetFoodAndEatTask::GetFoodAndEatTask(SimulationState& simState) {
+	auto townHallPos = simState.m_structures[0]->m_pos;
+
+	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y)));
+	m_actions.push_back(std::make_unique<GetItemFromStorageAction>(ItemCategory::Food,10));
+	m_actions.push_back(std::make_unique<ConsumeHaulAction>());
+}
+void GetFoodAndEatTask::tick(EntityState& ent) {
+	
+	if (!m_isDone) {
+		if (m_actionStep == 0) {
+			if (!m_actions[0]->m_isDone)
+				m_actions[0]->tick(ent);
+			else m_actionStep = 1;
+		}
+
+		if (m_actionStep == 1) {
+			if (!m_actions[1]->m_isDone)
+				m_actions[1]->tick(ent);
+			else {
+				auto act = reinterpret_cast<GetItemFromStorageAction*>(m_actions[1].get());
+				if (act->m_isFound == false) {	//if u havent found food, dont try to consume it
+					m_isDone = true;
+				}
+				else {
+					m_actionStep = 2; //else try to consume it
+				}
+				
+			}
+		}
+
+		if (m_actionStep == 2) {
+			if (!m_actions[2]->m_isDone)
+				m_actions[2]->tick(ent);
+			else m_isDone = true;
+		}
+	}
+}

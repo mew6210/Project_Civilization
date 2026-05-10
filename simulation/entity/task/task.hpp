@@ -44,3 +44,9 @@ class GatherWoodTreeTask : public Task {
 public:
 	GatherWoodTreeTask(uint16_t treeIndex, SimulationState&);
 };
+
+class GetFoodAndEatTask : public Task {
+	void tick(EntityState& entState) override;
+public:
+	GetFoodAndEatTask(SimulationState&);
+};

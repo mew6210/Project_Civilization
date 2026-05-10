@@ -38,3 +38,20 @@ struct WaitAction : public Action {
 struct DumpToStorageAction : public Action {	//TODO: assumes that u just dump everything u have, will probably have to be changed later
 	void tick(EntityState&) override;
 };
+
+struct GetItemFromStorageAction : public Action {
+	
+	ItemCategory m_itemCategory;
+	ItemType m_specificType;
+	uint64_t m_count;
+
+	GetItemFromStorageAction(ItemCategory, uint64_t);
+	GetItemFromStorageAction(ItemType, uint64_t);
+	void tick(EntityState&) override;
+public:
+	bool m_isFound = false;
+};
+
+struct ConsumeHaulAction : public Action {
+	void tick(EntityState&) override;
+};

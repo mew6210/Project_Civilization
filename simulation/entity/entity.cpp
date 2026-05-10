@@ -3,7 +3,11 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 
 namespace {
-	constexpr int k_HungerTickDecreaseCount = 60;
+	constexpr int k_HungerTickDecreaseCount = 20;
+	constexpr int k_HealthTickDecreaseFromHungerCount = 20;
+	constexpr int k_GoEatTaskPriority = 5;
+	constexpr int k_GoEatTaskCooldownTicks = 600;
+	constexpr int k_GoEatTaskSatiationLimit = 60;
 }
 
 /*
@@ -28,11 +32,41 @@ void Entity::doCurrentTask() {
 
 void Entity::updateStats() {
 
-	if (m_tickCounter % k_HungerTickDecreaseCount == 0 && m_entState.m_satiation != 0) m_entState.m_satiation--;
-	if (m_entState.m_satiation == 0 && m_entState.m_health != 0) m_entState.m_health--;
+	if (m_tickCounter % k_HungerTickDecreaseCount == 0 && 
+		m_entState.m_satiation != 0) m_entState.m_satiation--;
+	
+	if (m_entState.m_satiation == 0 && 
+		m_entState.m_health != 0 && 
+		m_tickCounter % k_HealthTickDecreaseFromHungerCount == 0) m_entState.m_health--;
+	
 	if (m_entState.m_health == 0) m_entState.m_isDead = true;
 
 	m_tickCounter++;
+}
+
+void Entity::addHungryTask() {
+	auto tsk = PrioritizedTask{
+			std::make_unique<GetFoodAndEatTask>(m_entState.m_wState),
+			k_GoEatTaskPriority
+	};
+	delegateTask(std::move(tsk));
+}
+//TODO: DOCUMENT IT
+void Entity::addTasks() {
+	if (m_entState.m_satiation < k_GoEatTaskSatiationLimit &&
+		m_tasks.size() == 0 && 
+		m_tickCounter % k_GoEatTaskCooldownTicks == 0) {
+		addHungryTask();
+	}
+	//TODO: DOCUMENT IT
+	if (m_tasks.size() > 0) {
+		if (m_entState.m_satiation < k_GoEatTaskSatiationLimit &&
+			m_tasks[0].priority != k_GoEatTaskPriority
+			&& m_tickCounter % k_GoEatTaskCooldownTicks == 0
+			) {
+			addHungryTask();
+		}
+	}
 }
 
 void Entity::sim() {
@@ -41,6 +75,7 @@ void Entity::sim() {
 	
 	doCurrentTask();
 	updateStats();
+	addTasks();
 }
 
 void Entity::delegateTask(PrioritizedTask tsk) const {

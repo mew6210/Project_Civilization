@@ -18,13 +18,15 @@ struct Entity {
 	mutable std::vector<PrioritizedTask> m_tasks = {};
 	uint16_t m_curTask = 0;
 
-	Entity(const SimulationState& wState) : m_entState(wState) {}
-	Entity(const SimulationState& wState, uint16_t posX, uint16_t posY) :m_entState(wState,posX,posY) {}
+	Entity(SimulationState& wState) : m_entState(wState) {}
+	Entity(SimulationState& wState, uint16_t posX, uint16_t posY) :m_entState(wState,posX,posY) {}
 	void render(sf::RenderWindow& window) const;
 	void sim();
 	void delegateTask(PrioritizedTask tsk) const;
 
 private:
+	void addHungryTask();
 	void doCurrentTask();
 	void updateStats();
+	void addTasks();
 };
