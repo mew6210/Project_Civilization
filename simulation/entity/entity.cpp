@@ -5,10 +5,10 @@
 namespace {
 	constexpr int k_HungerTickDecreaseCount = 20;
 	constexpr int k_HealthTickDecreaseFromHungerCount = 20;
-	constexpr int k_HealthTickIncreaseFromSatiationCount = 20;
+	constexpr int k_HealthTickIncreaseFromSatiationCount = 10;
 	constexpr int k_GoEatTaskPriority = 5;
-	constexpr int k_GoEatTaskCooldownTicks = 1;
-	constexpr int k_GoEatTaskSatiationLimit = 60;
+	constexpr int k_GoEatTaskCooldownTicks = 100;
+	constexpr int k_GoEatTaskSatiationLimit = 30;
 }
 
 /*
