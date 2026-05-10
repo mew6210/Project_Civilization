@@ -6,7 +6,7 @@ namespace {
 	constexpr int k_HungerTickDecreaseCount = 20;
 	constexpr int k_HealthTickDecreaseFromHungerCount = 20;
 	constexpr int k_GoEatTaskPriority = 5;
-	constexpr int k_GoEatTaskCooldownTicks = 600;
+	constexpr int k_GoEatTaskCooldownTicks = 1;
 	constexpr int k_GoEatTaskSatiationLimit = 60;
 }
 
@@ -30,11 +30,15 @@ void Entity::doCurrentTask() {
 	else m_tasks.pop_back();
 }
 
+//TODO: DOCUMENT IT
 void Entity::updateStats() {
 
 	if (m_tickCounter % k_HungerTickDecreaseCount == 0 && 
 		m_entState.m_satiation != 0) m_entState.m_satiation--;
 	
+	if (m_entState.m_satiation < k_GoEatTaskSatiationLimit) m_isAcceptingTasks = false;
+	if (m_entState.m_satiation > k_GoEatTaskSatiationLimit) m_isAcceptingTasks = true;
+
 	if (m_entState.m_satiation == 0 && 
 		m_entState.m_health != 0 && 
 		m_tickCounter % k_HealthTickDecreaseFromHungerCount == 0) m_entState.m_health--;
@@ -49,7 +53,7 @@ void Entity::addHungryTask() {
 			std::make_unique<GetFoodAndEatTask>(m_entState.m_wState),
 			k_GoEatTaskPriority
 	};
-	delegateTask(std::move(tsk));
+	delegateTask(std::move(tsk),true);
 }
 //TODO: DOCUMENT IT
 void Entity::addTasks() {
@@ -78,7 +82,9 @@ void Entity::sim() {
 	addTasks();
 }
 
-void Entity::delegateTask(PrioritizedTask tsk) const {
+void Entity::delegateTask(PrioritizedTask tsk, bool force) const {
+
+	if (!m_isAcceptingTasks && !force) return;
 
 	if (m_tasks.size() == 1) {
 		if (m_tasks[0].priority == 0) {

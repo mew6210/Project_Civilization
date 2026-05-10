@@ -143,7 +143,7 @@ void TownHall::delegateGatherBushTask() {
 			m_simState),
 		k_GatherTaskPriority
 	};
-	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk));
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk),false);
 	
 	auto bushPtr = reinterpret_cast<Bush*>(m_simState.m_structures[bushId.value()].get());
 	std::cout << "gathering fruits delegated, entityID: "<<entityId.value()<<" bushID: "<<bushId.value()<<" fruitCount: "<<+bushPtr->getFruitAmount()<<"\n";
@@ -171,7 +171,7 @@ void TownHall::delegateGatherWoodTreeTask() {
 			m_simState),
 		k_GatherTaskPriority
 	};
-	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk));
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk),false);
 
 	auto treePtr = reinterpret_cast<Tree*>(m_simState.m_structures[treeId.value()].get());
 	std::cout << "gathering wood delegated, entityID: " << entityId.value() << " treeID: " << treeId.value() << " woodCount: " << +treePtr->getWoodAmount() << "\n";

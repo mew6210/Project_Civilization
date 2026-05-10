@@ -20,7 +20,7 @@ struct EntityState {
 	SimulationState& m_wState;
 
 	uint64_t m_health = 100;
-	uint64_t m_satiation = 50;
+	uint64_t m_satiation = 150;
 	bool m_isDead = false;
 	
 
