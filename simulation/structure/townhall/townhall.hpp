@@ -23,6 +23,7 @@ class TownHall : public Structure {
 	std::optional<uint16_t> findTreeToGather(uint8_t);
 	bool isSuitableTree(uint8_t, uint8_t,Tree*) const;
 
+	void addStartingItems();
 public:
 
 	Storage inv = {};

@@ -190,4 +190,12 @@ void TownHall::tick(){
 	tickCounter++;
 }
 
-TownHall::TownHall(sf::Vector2f pos, SimulationState& simState): Structure(pos),m_simState(simState) {}
+void TownHall::addStartingItems() {
+	inv.insertItems(Item{ ItemType::Blueberry,30 });
+	inv.insertItems(Item{ ItemType::Strawberry,30 });
+	inv.insertItems(Item{ ItemType::Raspberry,30 });
+}
+
+TownHall::TownHall(sf::Vector2f pos, SimulationState& simState): Structure(pos),m_simState(simState) {
+	addStartingItems();
+}
