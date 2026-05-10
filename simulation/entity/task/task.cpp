@@ -60,7 +60,7 @@ Item GatherFruitBushTask::getFruitsFromBush(const SimulationState& simState) con
 
 	Item item = Item{ BushTypeToItemType(bushTemp->getBushType()),bushTemp->getFruitAmount()}; //TODO: Make it work for other bushes types
 
-	std::cout << "gathered " << +bushTemp->getFruitAmount()<<" fruit" <<" from bushId: "<<m_bushIndex << "\n";
+	//std::cout << "gathered " << +bushTemp->getFruitAmount()<<" fruit" <<" from bushId: "<<m_bushIndex << "\n";
 	bushTemp->clearFruitAmount();
 	
 	return item;
@@ -171,7 +171,7 @@ ItemType TreeTypeToItemType(TreeType treeType){
 Item GatherWoodTreeTask::getWoodFromTree(const SimulationState& simState) const{
 	auto treeTemp = dynamic_cast<Tree*>(simState.m_structures[m_treeIndex].get());
 
-	std::cout << "gathered " << +treeTemp->getWoodAmount() << " wood" << " from treeId: " << m_treeIndex << "\n";
+	//std::cout << "gathered " << +treeTemp->getWoodAmount() << " wood" << " from treeId: " << m_treeIndex << "\n";
 	Item item = {TreeTypeToItemType(treeTemp->getTreeType()),treeTemp->getWoodAmount()};
 	treeTemp->clearWoodAmount();
 	return item;

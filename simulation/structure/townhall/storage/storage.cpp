@@ -10,6 +10,24 @@ std::optional<size_t> Storage::doesItemTypeExist(ItemType type) {
 	return std::nullopt;
 }
 
+std::string itemTypeToString(ItemType t) {
+	switch (t) {
+		case ItemType::Strawberry: return "Strawberry";
+		case ItemType::Blueberry: return "Blueberry";
+		case ItemType::Raspberry: return "Raspberry";
+		case ItemType::Oak: return "Oak";
+		case ItemType::Spruce: return "Spruce";
+		case ItemType::Birch: return "Birch";
+		case ItemType::Null: return "Null";
+	}
+}
+
+void printInsert(Item i) {
+
+	std::cout << "storage += " << i.count << " " << itemTypeToString(i.type) << "\n";
+
+}
+
 void Storage::insertItems(Item i){
 	
 	auto index = doesItemTypeExist(i.type);
@@ -20,7 +38,8 @@ void Storage::insertItems(Item i){
 		m_items[index.value()].count += i.count;
 	}
 
-	std::cout << "inserted "<<i.count<<" items\n";
+
+	printInsert(i);
 }
 
 bool Storage::requestItems(EntityState& ent, Item i) {

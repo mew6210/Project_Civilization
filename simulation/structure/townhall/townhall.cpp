@@ -4,7 +4,7 @@
 
 //file-specific globals
 namespace {
-	constexpr uint8_t k_GatherThresholdAmount = 2;
+	constexpr uint8_t k_GatherThresholdAmount = 8;
 	constexpr uint8_t k_GatherTaskPriority = 10;
 	constexpr sf::Color k_TownHallColor = sf::Color(229, 232, 23);
 }
@@ -146,7 +146,7 @@ void TownHall::delegateGatherBushTask() {
 	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk),false);
 	
 	auto bushPtr = reinterpret_cast<Bush*>(m_simState.m_structures[bushId.value()].get());
-	std::cout << "gathering fruits delegated, entityID: "<<entityId.value()<<" bushID: "<<bushId.value()<<" fruitCount: "<<+bushPtr->getFruitAmount()<<"\n";
+	std::cout << "gather fruit, entID: "<<entityId.value()<<" strID: "<<bushId.value()<<"\n";
 }
 
 
@@ -174,7 +174,7 @@ void TownHall::delegateGatherWoodTreeTask() {
 	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk),false);
 
 	auto treePtr = reinterpret_cast<Tree*>(m_simState.m_structures[treeId.value()].get());
-	std::cout << "gathering wood delegated, entityID: " << entityId.value() << " treeID: " << treeId.value() << " woodCount: " << +treePtr->getWoodAmount() << "\n";
+	std::cout << "gather wood, entID: " << entityId.value() << " strID: " << treeId.value() << "\n";
 }
 
 /*
