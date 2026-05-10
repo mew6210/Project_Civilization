@@ -31,24 +31,35 @@ void Entity::doCurrentTask() {
 	else m_tasks.pop_back();
 }
 
-//TODO: DOCUMENT IT
-void Entity::updateStats() {
+bool Entity::isHungry() {
+	return (
+		m_tickCounter % k_HungerTickDecreaseCount == 0 &&
+		m_entState.m_satiation != 0);
+}
 
-	if (m_tickCounter % k_HungerTickDecreaseCount == 0 && 
-		m_entState.m_satiation != 0) m_entState.m_satiation--;
-	
+bool Entity::isStarving(){
+	return (m_entState.m_satiation == 0 &&
+		m_entState.m_health != 0 &&
+		m_tickCounter % k_HealthTickDecreaseFromHungerCount == 0);
+}
+
+bool Entity::isFull(){
+	return (m_entState.m_satiation > k_GoEatTaskSatiationLimit &&
+		m_entState.m_health != 100 &&
+		m_tickCounter % k_HealthTickIncreaseFromSatiationCount == 0);
+}
+
+void Entity::handleIsAcceptingTasks() {
 	if (m_entState.m_satiation < k_GoEatTaskSatiationLimit) m_isAcceptingTasks = false;
 	if (m_entState.m_satiation > k_GoEatTaskSatiationLimit) m_isAcceptingTasks = true;
+}
 
-	if (m_entState.m_satiation == 0 && 
-		m_entState.m_health != 0 && 
-		m_tickCounter % k_HealthTickDecreaseFromHungerCount == 0) m_entState.m_health--;
-	
-	if (m_entState.m_satiation > k_GoEatTaskSatiationLimit &&
-		m_entState.m_health != 100 &&
-		m_tickCounter % k_HealthTickIncreaseFromSatiationCount == 0) m_entState.m_health++;
+void Entity::updateStats() {
 
-
+	if (isHungry()) m_entState.m_satiation--;
+	if (isStarving()) m_entState.m_health--;
+	if (isFull()) m_entState.m_health++;	
+	handleIsAcceptingTasks();
 	if (m_entState.m_health == 0) m_entState.m_isDead = true;
 
 	m_tickCounter++;
@@ -61,22 +72,36 @@ void Entity::addHungryTask() {
 	};
 	delegateTask(std::move(tsk),true);
 }
-//TODO: DOCUMENT IT
-void Entity::addTasks() {
+
+void Entity::addTasksWhenNone() {
 	if (m_entState.m_satiation < k_GoEatTaskSatiationLimit &&
-		m_tasks.size() == 0 && 
-		m_tickCounter % k_GoEatTaskCooldownTicks == 0) {
+		m_tickCounter % k_GoEatTaskCooldownTicks == 0
+		)
+	{
+		addHungryTask();
+
+	}
+}
+
+void Entity::addTasksWhenSome() {
+
+	if (m_entState.m_satiation < k_GoEatTaskSatiationLimit &&
+		m_tasks[0].priority != k_GoEatTaskPriority
+		&& m_tickCounter % k_GoEatTaskCooldownTicks == 0
+		) {
 		addHungryTask();
 	}
-	//TODO: DOCUMENT IT
-	if (m_tasks.size() > 0) {
-		if (m_entState.m_satiation < k_GoEatTaskSatiationLimit &&
-			m_tasks[0].priority != k_GoEatTaskPriority
-			&& m_tickCounter % k_GoEatTaskCooldownTicks == 0
-			) {
-			addHungryTask();
-		}
+}
+
+//adds tasks needed by the entity
+void Entity::addTasks() {
+	if (m_tasks.size() == 0) {
+		addTasksWhenNone();
 	}
+	else {
+		addTasksWhenSome();
+	}
+
 }
 
 void Entity::sim() {

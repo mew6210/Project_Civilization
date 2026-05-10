@@ -31,4 +31,11 @@ private:
 	void doCurrentTask();
 	void updateStats();
 	void addTasks();
+	
+	void addTasksWhenSome();
+	void addTasksWhenNone();
+	void handleIsAcceptingTasks();
+	bool isHungry();
+	bool isStarving();
+	bool isFull();
 };
