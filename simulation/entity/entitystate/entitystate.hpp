@@ -10,7 +10,7 @@ class SimulationState;
 	Is passed to stuff like Task or Action by a reference
 */
 struct EntityState {
-	const uint32_t m_id = 0;	//TODO: ADD MORE STUFF LIKE AGE, NAME, HUNGER, GENDER
+	const uint32_t m_id = 0;	//TODO: ADD MORE STUFF LIKE AGE, NAME, GENDER
 	uint16_t m_posX = 0;
 	uint16_t m_posY = 0;
 	

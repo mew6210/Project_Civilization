@@ -1,6 +1,7 @@
 #include "simulation.hpp"
 #include "entity/entity.hpp"
 #include <iostream>
+#include "../utility/logger/logger.hpp"
 
 Simulation::Simulation(const MapData& md) : m_wState(md) {
 	m_wState.m_entities.reserve(1000);
@@ -18,7 +19,7 @@ void Simulation::simulateEntities() {
 		it != m_wState.m_entities.end(); ) {
 
 		if ((*it)->m_entState.m_isDead) {
-			std::cout << "entity DIED" << (*it)->m_entState.m_id << "\n";
+			defaultLogger.warningLog("entity died, id: ", (*it)->m_entState.m_id);
 			it = m_wState.m_entities.erase(it);
 		}
 			

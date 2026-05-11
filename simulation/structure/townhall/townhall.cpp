@@ -1,6 +1,7 @@
 #include "townhall.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
+#include "../../../utility/logger/logger.hpp"
 
 //file-specific globals
 namespace {
@@ -146,7 +147,7 @@ void TownHall::delegateGatherBushTask() {
 	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk),false);
 	
 	auto bushPtr = reinterpret_cast<Bush*>(m_simState.m_structures[bushId.value()].get());
-	std::cout << "gather fruit, entID: "<<entityId.value()<<" strID: "<<bushId.value()<<"\n";
+	defaultLogger.infoLog("gather fruit, entID: ", entityId.value(), "strID: ", bushId.value());
 }
 
 
@@ -174,7 +175,7 @@ void TownHall::delegateGatherWoodTreeTask() {
 	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk),false);
 
 	auto treePtr = reinterpret_cast<Tree*>(m_simState.m_structures[treeId.value()].get());
-	std::cout << "gather wood, entID: " << entityId.value() << " strID: " << treeId.value() << "\n";
+	defaultLogger.infoLog("gather wood, entID: ", entityId.value(), "strID: ", treeId.value());
 }
 
 /*

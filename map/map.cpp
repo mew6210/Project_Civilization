@@ -1,6 +1,7 @@
 #include "map.hpp"
 #include <fstream>
 #include <iostream>
+#include "../utility/logger/logger.hpp"
 
 namespace trimLib{
 
@@ -47,7 +48,7 @@ void handleDataString(const std::string& line,std::vector<TileType>& data) {
 void Map::initMapData(const std::string& f) {
 	std::ifstream file(f);
 	if (!file.good()) {
-		throw std::exception("map data file failed to open");
+		defaultLogger.errorLog(true, "map data file failed to open");
 	}
 
 	std::string line = "";
@@ -118,7 +119,7 @@ void Map::initTexture() {
 	}
 
 	if (!(m_texture.resize({ m_data.getWidth(), m_data.getHeight() }))) {
-		throw std::exception("error resizing texture");
+		defaultLogger.errorLog(true, "error resizing texture");
 	}
 
 	m_texture.update(pixels.data());
