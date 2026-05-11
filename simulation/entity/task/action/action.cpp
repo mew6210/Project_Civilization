@@ -3,7 +3,7 @@
 #include "../../../simulationstate/simulationstate.hpp"
 #include "../../../structure/townhall/townhall.hpp"
 #include <iostream>
-#include "../../../../utility/logger.hpp"
+#include "../../../../utility/logger/logger.hpp"
 
 void MoveToAction::tick(EntityState& entState) {
 

@@ -1,6 +1,6 @@
 #include "storage.hpp"
 #include <iostream>
-#include "../../../../utility/logger.hpp"
+#include "../../../../utility/logger/logger.hpp"
 
 std::optional<size_t> Storage::doesItemTypeExist(ItemType type) {
 	for (size_t i = 0; i < m_items.size(); i++) {

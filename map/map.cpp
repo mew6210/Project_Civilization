@@ -1,7 +1,7 @@
 #include "map.hpp"
 #include <fstream>
 #include <iostream>
-#include "../utility/logger.hpp"
+#include "../utility/logger/logger.hpp"
 
 namespace trimLib{
 

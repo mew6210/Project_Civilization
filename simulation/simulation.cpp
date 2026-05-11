@@ -1,7 +1,7 @@
 #include "simulation.hpp"
 #include "entity/entity.hpp"
 #include <iostream>
-#include "../utility/logger.hpp"
+#include "../utility/logger/logger.hpp"
 
 Simulation::Simulation(const MapData& md) : m_wState(md) {
 	m_wState.m_entities.reserve(1000);

@@ -1,7 +1,7 @@
 #include "townhall.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
-#include "../../../utility/logger.hpp"
+#include "../../../utility/logger/logger.hpp"
 
 //file-specific globals
 namespace {
