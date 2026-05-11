@@ -1,5 +1,6 @@
 #include "storage.hpp"
 #include <iostream>
+#include "../../../../utility/logger.hpp"
 
 std::optional<size_t> Storage::doesItemTypeExist(ItemType type) {
 	for (size_t i = 0; i < m_items.size(); i++) {
@@ -23,9 +24,7 @@ std::string itemTypeToString(ItemType t) {
 }
 
 void printInsert(Item i) {
-
-	std::cout << "storage += " << i.count << " " << itemTypeToString(i.type) << "\n";
-
+	defaultLogger.infoLog("storage +=", i.count, " ", itemTypeToString(i.type));
 }
 
 void Storage::insertItems(Item i){

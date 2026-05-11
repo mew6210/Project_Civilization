@@ -3,6 +3,7 @@
 #include "../../../simulationstate/simulationstate.hpp"
 #include "../../../structure/townhall/townhall.hpp"
 #include <iostream>
+#include "../../../../utility/logger.hpp"
 
 void MoveToAction::tick(EntityState& entState) {
 
@@ -39,12 +40,12 @@ void DumpToStorageAction::tick(EntityState& ent) {
 
 	if (ent.m_posX != townHallPosX){
 		m_isDone = true;
-		std::cout << "something big fucked up";
+		defaultLogger.errorLog(false, "townhall Position and dumpToSTorageAction x axis does not match");
 		return;
 	}
 	if (ent.m_posY != townHallPosY){
 		m_isDone = true;
-		std::cout << "something big fucked up";
+		defaultLogger.errorLog(false, "townhall Position and dumpToSTorageAction y axis does not match");
 		return;
 	}
 
@@ -55,6 +56,25 @@ void DumpToStorageAction::tick(EntityState& ent) {
 	m_isDone = true;
 }
 
+constexpr std::string_view ItemCategoryToString(ItemCategory category) {
+	switch (category) {
+	case ItemCategory::Food:
+		return "Food";
+
+	case ItemCategory::Material:
+		return "Material";
+
+	case ItemCategory::Specific:
+		return "Specific";
+
+	case ItemCategory::Null:
+		return "Null";
+
+	default:
+		return "Unknown";
+	}
+}
+
 void GetItemFromStorageAction::tick(EntityState& ent) {
 
 	auto townhallPtr= dynamic_cast<TownHall*>(ent.m_wState.m_structures[0].get());
@@ -63,7 +83,7 @@ void GetItemFromStorageAction::tick(EntityState& ent) {
 		
 		auto res = townhallPtr->inv.requestCategory(ent, m_itemCategory, m_count);
 		if (!res) {
-			std::cout << "couldnt find enough of category\n";
+			defaultLogger.warningLog("Entity couldn't find enough of: ", ItemCategoryToString(m_itemCategory), " ", m_count);
 			m_isDone = true;
 			return;
 		}
@@ -92,11 +112,12 @@ void ConsumeHaulAction::tick(EntityState& ent) {
 		
 		ent.m_satiation += foodAmount * foodSatiation;
 		ent.m_haul = Item{ ItemType::Null,0 };
-		std::cout << "entId: " << ent.m_id << " eaten food, current satiation: " << ent.m_satiation << " current hp: " << ent.m_health<<"\n";
+		
+		defaultLogger.infoLog("entId: ",ent.m_id," eaten food, current satiation: ",ent.m_satiation," current hp: ",ent.m_health);
 		m_isDone = true;
 	}
 	else {
-		std::cout << "this cannot be eaten bro\n";
+		defaultLogger.warningLog("entity tried to eat something uneatable");
 		m_isDone = true;
 	}
 }
