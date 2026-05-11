@@ -1,6 +1,8 @@
 #include "mapgeneration.hpp"
 #include <fstream>
 #include <iostream>
+#include <filesystem>
+
 
 sf::Vector2f randomGradient(int ix, int iy, unsigned int seed) {
     //Hashing
@@ -71,6 +73,10 @@ float perlin(float x, float y, unsigned int seed) {
 }
 
 void generateMap(std::string name,unsigned int seed) {
+
+    if (std::filesystem::exists(name)) { //if file exists, dont generate
+        return;
+    }
 
     const int windowWidth = 800;
     const int windowHeight = 600;
