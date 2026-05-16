@@ -51,7 +51,7 @@ void DumpToStorageAction::tick(EntityState& ent) {
 
 	auto townHallPtr = reinterpret_cast<TownHall*>(ent.m_wState.m_structures[0].get());
 
-	townHallPtr->inv.insertItems(Item{ent.m_haul.type,ent.m_haul.count});
+	townHallPtr->inv.insertItems(Item{ent.m_haul.type,ent.m_haul.count},false);
 	ent.m_haul = {};
 	m_isDone = true;
 }

@@ -9,7 +9,8 @@ class Storage {
 	std::optional<size_t> doesItemTypeExist(ItemType);
 	bool doesCategoryExist(ItemCategory);
 public:
-	void insertItems(Item);
+	size_t howManyFromCategoryExist(ItemCategory);
+	void insertItems(Item,bool);
 	bool requestItems(EntityState&, Item);
 	bool requestCategory(EntityState&,ItemCategory, uint64_t);
 };
