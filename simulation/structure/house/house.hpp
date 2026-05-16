@@ -9,5 +9,5 @@ class House : public Structure {
 	void tick() override;
 
 	House(sf::Vector2f);
-	StructureType getType() const override { return StructureType::House; }
+	StructureType getType() const override { return StructureType::Null; }
 };

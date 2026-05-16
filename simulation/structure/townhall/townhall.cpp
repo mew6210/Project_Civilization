@@ -186,6 +186,7 @@ void TownHall::tick(){
 	if (tickCounter % 20 == 0) {
 		delegateGatherBushTask();
 		delegateGatherWoodTreeTask();
+		handleBuildings();
 	}
 
 	tickCounter++;
@@ -195,6 +196,95 @@ void TownHall::addStartingItems() {
 	inv.insertItems(Item{ ItemType::Blueberry,30 },true);
 	inv.insertItems(Item{ ItemType::Strawberry,30 },true);
 	inv.insertItems(Item{ ItemType::Raspberry,30 },true);
+}
+
+void TownHall::handleBuildings() {
+	queueBuildings();
+}
+
+void TownHall::queueBuildings() {
+
+	if (inv.howManyFromCategoryExist(ItemCategory::Wood) > 30 
+		&& m_BuildingsScheduled < 2) {
+		
+		m_buildingQueue.push_back(std::make_unique<Buildable>(BuildableType::House, getSuitableHousePosition()));
+		m_BuildingsScheduled++;
+		defaultLogger.infoLog("delegated building a house");
+	}
+
+}
+
+
+//AI GENERATED
+sf::Vector2f TownHall::getSuitableHousePosition()
+{
+	constexpr float HOUSE_RADIUS = 8.f;      // approximate house size
+	constexpr float REQUIRED_GAP = 5.f;
+	constexpr float MIN_DISTANCE = HOUSE_RADIUS * 2.f + REQUIRED_GAP;
+
+	constexpr float SEARCH_STEP = 10.f;
+	constexpr float MAX_SEARCH_RADIUS = 500.f;
+
+	const float worldWidth = m_simState.getMapSize().m_width;
+	const float worldHeight = m_simState.getMapSize().m_height;
+
+	// Collect existing structure positions
+	std::vector<sf::Vector2f> positions;
+
+	for (auto& structure : m_simState.m_structures)
+	{
+		positions.push_back(structure->m_pos);
+	}
+
+	auto isValidPosition = [&](const sf::Vector2f& pos)
+		{
+			// Bounds check
+			if (pos.x < 0 || pos.y < 0 ||
+				pos.x > worldWidth || pos.y > worldHeight)
+			{
+				return false;
+			}
+
+			// Distance check
+			for (const auto& other : positions)
+			{
+				float dx = pos.x - other.x;
+				float dy = pos.y - other.y;
+
+				float distSq = dx * dx + dy * dy;
+
+				if (distSq < MIN_DISTANCE * MIN_DISTANCE)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		};
+
+	// Spiral/radial search
+	for (float radius = SEARCH_STEP;
+		radius <= MAX_SEARCH_RADIUS;
+		radius += SEARCH_STEP)
+	{
+		for (float angle = 0.f; angle < 360.f; angle += 15.f)
+		{
+			float rad = angle * 3.14159265f / 180.f;
+
+			sf::Vector2f candidate(
+				m_pos.x + std::cos(rad) * radius,
+				m_pos.y + std::sin(rad) * radius
+			);
+
+			if (isValidPosition(candidate))
+			{
+				return candidate;
+			}
+		}
+	}
+
+	// fallback
+	return m_pos;
 }
 
 TownHall::TownHall(sf::Vector2f pos, SimulationState& simState): Structure(pos),m_simState(simState) {

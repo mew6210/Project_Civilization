@@ -64,3 +64,9 @@ void SimulationState::addStructure(sf::Vector2f pos, StructureType type) {
 	}
 	if (type == StructureType::TownHall) m_structures.push_back(std::make_unique<TownHall>(pos, *this));
 }
+
+void SimulationState::addBuilding(sf::Vector2f pos, BuildableType type) {
+
+	m_structures.push_back(std::make_unique<Buildable>(type,pos));
+
+}

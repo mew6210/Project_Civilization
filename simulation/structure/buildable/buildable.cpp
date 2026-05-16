@@ -2,7 +2,7 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 
 namespace {
-	constexpr sf::Color k_BuildingColor = sf::Color(179, 140, 28, 0.34);
+	constexpr sf::Color k_BuildingColor = sf::Color(94, 70, 19);
 }
 
 void Buildable::handleStorageInitialization(BuildableType type) {

@@ -11,19 +11,28 @@ std::optional<size_t> Storage::doesItemTypeExist(ItemType type) {
 	return std::nullopt;
 }
 
+size_t Storage::howManyItemTypeExist(ItemType type) {
+	for (size_t i = 0; i < m_items.size(); i++) {
+		if (m_items[i].type == type) {
+			return m_items[i].count;
+		}
+	}
+	return 0;
+}
+
 size_t Storage::howManyFromCategoryExist(ItemCategory cat) {
 
 	size_t count = 0;
 
 	if (cat == ItemCategory::Wood) {
 	
-		auto oakwood = doesItemTypeExist(ItemType::Oak);
-		auto sprucewood = doesItemTypeExist(ItemType::Spruce);
-		auto birchwood = doesItemTypeExist(ItemType::Birch);
+		auto oakwood = howManyItemTypeExist(ItemType::Oak);
+		auto sprucewood = howManyItemTypeExist(ItemType::Spruce);
+		auto birchwood = howManyItemTypeExist(ItemType::Birch);
 
-		if (oakwood)   {count += oakwood.value(); }
-		if(sprucewood) {count += sprucewood.value();}
-		if (birchwood) {count += birchwood.value();}
+		count += oakwood; 
+		count += sprucewood;
+		count += birchwood;
 		return count;
 	}
 

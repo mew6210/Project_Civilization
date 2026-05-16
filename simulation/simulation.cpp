@@ -2,6 +2,7 @@
 #include "entity/entity.hpp"
 #include <iostream>
 #include "../utility/logger/logger.hpp"
+#include "structure/townhall/townhall.hpp"
 
 Simulation::Simulation(const MapData& md) : m_wState(md) {
 	m_wState.m_entities.reserve(1000);
@@ -30,7 +31,16 @@ void Simulation::simulateEntities() {
 	}
 
 }
+
 void Simulation::simulateStructures(){
+
+	auto townHallPtr = dynamic_cast<TownHall*>(m_wState.m_structures[0].get());
+
+	for (auto& entry : townHallPtr->m_buildingQueue) {
+		m_wState.m_structures.push_back(std::move(entry));
+	}
+	townHallPtr->m_buildingQueue.clear();
+
 	for (auto& structure : m_wState.m_structures) {
 		structure->tick();
 	}

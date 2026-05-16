@@ -20,10 +20,11 @@ class Buildable : public Structure {
 	void handleStorageInitialization(BuildableType);
 
 public:
-	void render(sf::RenderWindow&);
-	void tick();
+	void render(sf::RenderWindow&) override;
+	void tick() override;
 	void insertMaterials(EntityState&);
 	std::vector<ItemCategory> getNeededItems();
+	StructureType getType() const { return StructureType::Building; };
 	BuildableType getBuildingType() const { return m_type; }
 	Buildable(BuildableType, sf::Vector2f);
 };

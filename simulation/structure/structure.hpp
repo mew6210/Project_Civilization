@@ -4,7 +4,7 @@ enum class StructureType {
 	TownHall,
 	Bush,
 	Tree,
-	House,
+	Building,
 	Null
 };
 
