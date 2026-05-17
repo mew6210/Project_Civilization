@@ -56,6 +56,6 @@ class HaulMaterialToBuilding : public Task {
 	ItemCategory m_cat;
 	uint16_t m_structureIndex;
 
-	public:
+public:
 	HaulMaterialToBuilding(ItemCategory,uint16_t, SimulationState&);
 };
