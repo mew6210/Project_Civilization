@@ -1,6 +1,8 @@
 #include "entity.hpp"
 #include <algorithm>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <cmath>
+#include "../simulationstate/simulationstate.hpp"
 
 namespace {
 	constexpr int k_HungerTickDecreaseCount = 20;
@@ -9,6 +11,8 @@ namespace {
 	constexpr int k_GoEatTaskPriority = 5;
 	constexpr int k_GoEatTaskCooldownTicks = 100;
 	constexpr int k_GoEatTaskSatiationLimit = 30;
+	constexpr int k_AgingTickCount = 200;
+	constexpr int k_EvaluateDeathTickCount = 100;
 }
 
 /*
@@ -54,8 +58,35 @@ void Entity::handleIsAcceptingTasks() {
 	if (m_entState.m_satiation > k_GoEatTaskSatiationLimit) m_isAcceptingTasks = true;
 }
 
+//AI GENERATED
+void Entity::evalDeath() {
+
+	if (m_entState.m_age < 70) return;
+
+	const int N = 10000;
+
+	float age = (float)m_entState.m_age;
+
+	float k = 0.001f; // tuning parameter (very important)
+
+	float p = 1.0f - expf(-age * k);
+
+	int threshold = (int)(p * N);
+
+	int roll = m_entState.m_wState.getRandInt(0,N-1);
+
+	if (roll < threshold)
+	{
+		m_entState.m_isDead = true;
+		m_entState.m_naturalCauses = true;
+	}
+
+}
+
 void Entity::updateStats() {
 
+	if (m_tickCounter % k_AgingTickCount == 0) m_entState.m_age++;
+	if (m_tickCounter % k_EvaluateDeathTickCount == 0) evalDeath();
 	if (isHungry()) m_entState.m_satiation--;
 	if (isStarving()) m_entState.m_health--;
 	if (isFull()) m_entState.m_health++;	

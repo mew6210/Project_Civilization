@@ -31,6 +31,8 @@ private:
 	void doCurrentTask();
 	void updateStats();
 	void addTasks();
+	void evalDeath();
+
 	
 	void addTasksWhenSome();
 	void addTasksWhenNone();
