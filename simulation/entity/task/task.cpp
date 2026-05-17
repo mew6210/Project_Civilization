@@ -234,6 +234,9 @@ void GetFoodAndEatTask::tick(EntityState& ent) {
 HaulMaterialToBuilding::HaulMaterialToBuilding(ItemCategory cat,uint16_t structureId, SimulationState& simState): m_cat(cat), m_structureIndex(structureId) {
 	auto townHallPos = simState.m_structures[0]->m_pos;
 	auto buildingPos = simState.m_structures[m_structureIndex]->m_pos;
+	
+	auto buildingPtr = reinterpret_cast<Buildable*>(simState.m_structures[m_structureIndex].get());
+	buildingPtr->claim();
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y))); //go to townhall
 	m_actions.push_back(std::make_unique<GetItemFromTownHallStorageAction>(cat,10)); //get items
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(buildingPos.x), uint16_t(buildingPos.y))); //go to building
@@ -265,6 +268,8 @@ void HaulMaterialToBuilding::tick(EntityState& ent) {
 			if (!m_actions[3]->m_isDone)
 				m_actions[3]->tick(ent);
 			else {
+				auto buildingPtr = reinterpret_cast<Buildable*>(ent.m_wState.m_structures[m_structureIndex].get());
+				buildingPtr->unclaim();
 				m_isDone = true;
 			}
 		}

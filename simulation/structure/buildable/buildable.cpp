@@ -27,7 +27,7 @@ std::vector<ItemCategory> Buildable::getNeededItems() {
 
 	for (auto& matNeeded : m_recipe.m_materialsNeeded) {
 
-		if (m_storage.howManyFromCategoryExist(matNeeded.first) > matNeeded.second) {
+		if (m_storage.howManyFromCategoryExist(matNeeded.first) < matNeeded.second) {
 			neededCategories.push_back(matNeeded.first);
 		}
 

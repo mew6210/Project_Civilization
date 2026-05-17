@@ -178,6 +178,130 @@ void TownHall::delegateGatherWoodTreeTask() {
 	defaultLogger.infoLog("gather wood, entID: ", entityId.value(), "strID: ", treeId.value());
 }
 
+std::vector<std::pair<size_t,std::vector<ItemCategory>>> TownHall::getBuildingsAndNeeds() {
+	std::vector<std::pair<size_t, std::vector<ItemCategory>>> vec = {};
+	for (size_t i = 0; i < m_simState.m_structures.size();i++) {
+
+		if (m_simState.m_structures[i]->getType() == StructureType::Building) {
+			auto buildableptr = dynamic_cast<Buildable*>(m_simState.m_structures[i].get());
+			if (buildableptr->checkisBuilt()) continue;
+			if (buildableptr->isClaimed())    continue;
+			vec.push_back({ i,buildableptr->getNeededItems() });
+		}
+
+	}
+	return vec;
+}
+
+std::vector<ItemCategory> TownHall::getCurrentTownHallMaterialsAvailable() {
+	std::vector<ItemCategory> vec;
+
+	if (inv.howManyFromCategoryExist(ItemCategory::Wood) > 10) vec.push_back(ItemCategory::Wood);
+	if (inv.howManyFromCategoryExist(ItemCategory::Food) > 10) vec.push_back(ItemCategory::Food);
+	//probably add stone too later
+	return vec;
+}
+
+
+std::optional<std::pair<uint16_t, ItemCategory>> TownHall::findBuildingToBuild() {
+
+	auto buildings = getBuildingsAndNeeds();
+	auto available = getCurrentTownHallMaterialsAvailable();
+
+	for (const auto& [id, neededItems] : buildings) {
+
+		for (const auto& catNeeded : neededItems) {
+			if (std::count(available.begin(), available.end(), catNeeded) != 0) return std::make_pair(id, catNeeded);
+			else continue;
+		}
+	}
+	return std::nullopt;
+}
+
+/*
+//AI GENERATED
+std::optional<std::pair<uint16_t, ItemCategory>> TownHall::findBuildingToBuild()
+{
+	auto buildings = getBuildingsAndNeeds();
+	auto available = getCurrentTownHallMaterialsAvailable();
+
+	uint16_t bestBuildingId = 0;
+	ItemCategory neededItem{};
+	size_t bestScore = 0;
+
+	bool found = false;
+
+	for (const auto& [id, neededItems] : buildings)
+	{
+		size_t matched = 0;
+		std::optional<ItemCategory> firstMissing;
+
+		for (const auto& item : neededItems)
+		{
+			auto it = std::find(available.begin(), available.end(), item);
+
+			if (it != available.end())
+			{
+				matched++;
+			}
+			else if (!firstMissing.has_value())
+			{
+				firstMissing = item;
+			}
+		}
+
+		// already fully buildable
+		if (matched == neededItems.size() && neededItems.size()!=0)
+		{
+			return std::make_pair(id, buildings[matched].second[0]);
+		}
+
+		// best partial match so far
+		if (matched > bestScore && firstMissing.has_value())
+		{
+			bestScore = matched;
+			bestBuildingId = id;
+			neededItem = *firstMissing;
+			found = true;
+		}
+	}
+
+	if (found)
+	{
+		return std::make_pair(bestBuildingId, neededItem);
+	}
+
+	return std::nullopt;
+}
+*/
+void TownHall::delegateBuildBuildingsTask() {
+
+	auto entityId = findNotBusyEntityId();
+	if (!entityId) {
+		return;
+	}
+
+	auto building = findBuildingToBuild();
+	if (!building) {
+		return;
+	}
+
+	auto entityIndex = getEntityVectorIndexByEntityId(entityId.value()); //needed, because entityId != entity's index in a vector
+
+	PrioritizedTask tsk{
+		std::make_unique<HaulMaterialToBuilding>(
+			building.value().second,
+			building.value().first,
+			m_simState
+			),
+		10
+	};
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk), false);
+
+	auto buildingptr = reinterpret_cast<Buildable*>(m_simState.m_structures[building.value().first].get());
+	defaultLogger.infoLog("haul to building, entID: ", entityId.value(), "strID: ", building.value().first);
+}
+
 /*
 	Each tick townhall should evaluate its needs, and delegate tasks to fullfill those needs
 */
@@ -186,6 +310,7 @@ void TownHall::tick(){
 	if (tickCounter % 20 == 0) {
 		delegateGatherBushTask();
 		delegateGatherWoodTreeTask();
+		delegateBuildBuildingsTask();
 		handleBuildings();
 	}
 

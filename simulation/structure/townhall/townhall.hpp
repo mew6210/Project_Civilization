@@ -27,6 +27,10 @@ class TownHall : public Structure {
 	void handleBuildings();
 	void queueBuildings();
 	sf::Vector2f getSuitableHousePosition();
+	void delegateBuildBuildingsTask();
+	std::optional<std::pair<uint16_t, ItemCategory>> findBuildingToBuild();
+	std::vector<std::pair<size_t, std::vector<ItemCategory>>> getBuildingsAndNeeds();
+	std::vector<ItemCategory> getCurrentTownHallMaterialsAvailable();
 
 	void addStartingItems();
 public:
