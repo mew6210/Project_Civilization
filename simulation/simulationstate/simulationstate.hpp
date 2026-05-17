@@ -5,6 +5,7 @@
 #include "../../map/mapData/mapdata.hpp"
 #include "../structure/structure.hpp"
 #include "../entity/entity.hpp"
+#include "../structure/buildable/buildable.hpp"
 
 /*
 	Holds everything needed for simulation regarding world state
@@ -30,4 +31,5 @@ public:
 	int getRandInt(int min, int max) const;
 	void addStructure(sf::Vector2f, StructureType);
 	SimulationState(const MapData&);
+	void addBuilding(sf::Vector2f, BuildableType);
 };
