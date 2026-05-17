@@ -1,6 +1,8 @@
 #include "storage.hpp"
 #include <iostream>
 #include "../../../../utility/logger/logger.hpp"
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Font.hpp>
 
 std::optional<size_t> Storage::doesItemTypeExist(ItemType type) {
 	for (size_t i = 0; i < m_items.size(); i++) {
@@ -110,4 +112,17 @@ bool Storage::requestCategory(EntityState& ent, ItemCategory cat, uint64_t count
 		return false;
 
 	}
+}
+
+void Storage::renderItemList(sf::RenderWindow& win) {
+	std::string inventory = "Townhall Storage:\n";
+	for (int i = 0; i < m_items.size(); i++) {
+		inventory += itemTypeToString(m_items[i].type) + " " + std::to_string(m_items[i].count) + "\n";
+	}
+	sf::Font font("Pixel.ttf");
+	sf::Text text(font);
+	text.setString(inventory);
+	text.setCharacterSize(18);
+	text.setFillColor(sf::Color(255, 255, 255, 200));
+	win.draw(text);
 }
