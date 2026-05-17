@@ -50,3 +50,12 @@ class GetFoodAndEatTask : public Task {
 public:
 	GetFoodAndEatTask(SimulationState&);
 };
+
+class HaulMaterialToBuilding : public Task {
+	void tick(EntityState& entState) override;
+	ItemCategory m_cat;
+	uint16_t m_structureIndex;
+
+public:
+	HaulMaterialToBuilding(ItemCategory,uint16_t, SimulationState&);
+};

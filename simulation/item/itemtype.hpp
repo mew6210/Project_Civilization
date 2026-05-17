@@ -17,5 +17,7 @@ enum class ItemCategory {
 	Food,
 	Material,
 	Specific,
+	Wood,
+	Stone,
 	Null
 };

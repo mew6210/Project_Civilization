@@ -34,7 +34,7 @@ GatherFruitBushTask::GatherFruitBushTask(uint16_t bsInd,SimulationState& simStat
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(bushTemp->m_pos.x),uint16_t(bushTemp->m_pos.y)));
 	m_actions.push_back(std::make_unique<WaitAction>(bushTemp->getFruitAmount() * 10)); //gather one fruit in half a second
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y))); //go to townhall
-	m_actions.push_back(std::make_unique<DumpToStorageAction>()); //dump berries to storage
+	m_actions.push_back(std::make_unique<DumpToTownHallStorageAction>()); //dump berries to storage
 
 }
 
@@ -187,7 +187,7 @@ GatherWoodTreeTask::GatherWoodTreeTask(uint16_t treeIndex, SimulationState& simS
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(treeTemp->m_pos.x), uint16_t(treeTemp->m_pos.y)));
 	m_actions.push_back(std::make_unique<WaitAction>(treeTemp->getWoodAmount() * 10)); //gather one wood in half a second
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x),uint16_t(townHallPos.y)));
-	m_actions.push_back(std::make_unique<DumpToStorageAction>());
+	m_actions.push_back(std::make_unique<DumpToTownHallStorageAction>());
 }
 
 
@@ -195,7 +195,7 @@ GetFoodAndEatTask::GetFoodAndEatTask(SimulationState& simState) {
 	auto townHallPos = simState.m_structures[0]->m_pos;
 
 	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y)));
-	m_actions.push_back(std::make_unique<GetItemFromStorageAction>(ItemCategory::Food,10));
+	m_actions.push_back(std::make_unique<GetItemFromTownHallStorageAction>(ItemCategory::Food,10));
 	m_actions.push_back(std::make_unique<ConsumeHaulAction>());
 }
 void GetFoodAndEatTask::tick(EntityState& ent) {
@@ -211,7 +211,7 @@ void GetFoodAndEatTask::tick(EntityState& ent) {
 			if (!m_actions[1]->m_isDone)
 				m_actions[1]->tick(ent);
 			else {
-				auto act = reinterpret_cast<GetItemFromStorageAction*>(m_actions[1].get());
+				auto act = reinterpret_cast<GetItemFromTownHallStorageAction*>(m_actions[1].get());
 				if (act->m_isFound == false) {	//if u havent found food, dont try to consume it
 					m_isDone = true;
 				}
@@ -227,5 +227,52 @@ void GetFoodAndEatTask::tick(EntityState& ent) {
 				m_actions[2]->tick(ent);
 			else m_isDone = true;
 		}
+	}
+}
+
+
+HaulMaterialToBuilding::HaulMaterialToBuilding(ItemCategory cat,uint16_t structureId, SimulationState& simState): m_cat(cat), m_structureIndex(structureId) {
+	auto townHallPos = simState.m_structures[0]->m_pos;
+	auto buildingPos = simState.m_structures[m_structureIndex]->m_pos;
+	
+	auto buildingPtr = reinterpret_cast<Buildable*>(simState.m_structures[m_structureIndex].get());
+	buildingPtr->claim();
+	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y))); //go to townhall
+	m_actions.push_back(std::make_unique<GetItemFromTownHallStorageAction>(cat,10)); //get items
+	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(buildingPos.x), uint16_t(buildingPos.y))); //go to building
+	m_actions.push_back(std::make_unique<DumpToBuildingStorageAction>(m_structureIndex)); //insert materials to building storage
+}
+
+void HaulMaterialToBuilding::tick(EntityState& ent) {
+
+	if (!m_isDone) {
+		if (m_actionStep == 0) {
+			if (!m_actions[0]->m_isDone)
+				m_actions[0]->tick(ent);
+			else m_actionStep = 1;
+		}
+
+		if (m_actionStep == 1) {
+			if (!m_actions[1]->m_isDone)
+				m_actions[1]->tick(ent);
+			else m_actionStep = 2;
+		}
+
+		if (m_actionStep == 2) {
+			if (!m_actions[2]->m_isDone)
+				m_actions[2]->tick(ent);
+			else m_actionStep = 3;
+		}
+
+		if (m_actionStep == 3) {
+			if (!m_actions[3]->m_isDone)
+				m_actions[3]->tick(ent);
+			else {
+				auto buildingPtr = reinterpret_cast<Buildable*>(ent.m_wState.m_structures[m_structureIndex].get());
+				buildingPtr->unclaim();
+				m_isDone = true;
+			}
+		}
+
 	}
 }

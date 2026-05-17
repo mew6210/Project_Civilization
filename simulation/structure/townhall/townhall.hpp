@@ -7,7 +7,7 @@ class TownHall : public Structure {
 	uint64_t tickCounter = 1;
 
 	SimulationState& m_simState;
-	
+
 
 	//bush-related
 	std::optional<uint16_t> findBushToGather(uint8_t);
@@ -23,9 +23,21 @@ class TownHall : public Structure {
 	std::optional<uint16_t> findTreeToGather(uint8_t);
 	bool isSuitableTree(uint8_t, uint8_t,Tree*) const;
 
+	//building-related
+	void handleBuildings();
+	void queueBuildings();
+	sf::Vector2f getSuitableHousePosition();
+	void delegateBuildBuildingsTask();
+	std::optional<std::pair<uint16_t, ItemCategory>> findBuildingToBuild();
+	std::vector<std::pair<size_t, std::vector<ItemCategory>>> getBuildingsAndNeeds();
+	std::vector<ItemCategory> getCurrentTownHallMaterialsAvailable();
+	uint16_t countBuiltHouses();
+
 	void addStartingItems();
 public:
 
+	std::vector<std::unique_ptr<Structure>> m_buildingQueue = {};
+	uint8_t m_BuildingsScheduled = 0;
 	Storage inv = {};
 
 	void render(sf::RenderWindow&) override;

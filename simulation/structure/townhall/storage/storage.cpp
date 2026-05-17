@@ -13,6 +13,34 @@ std::optional<size_t> Storage::doesItemTypeExist(ItemType type) {
 	return std::nullopt;
 }
 
+size_t Storage::howManyItemTypeExist(ItemType type) {
+	for (size_t i = 0; i < m_items.size(); i++) {
+		if (m_items[i].type == type) {
+			return m_items[i].count;
+		}
+	}
+	return 0;
+}
+
+size_t Storage::howManyFromCategoryExist(ItemCategory cat) {
+
+	size_t count = 0;
+
+	if (cat == ItemCategory::Wood) {
+	
+		auto oakwood = howManyItemTypeExist(ItemType::Oak);
+		auto sprucewood = howManyItemTypeExist(ItemType::Spruce);
+		auto birchwood = howManyItemTypeExist(ItemType::Birch);
+
+		count += oakwood; 
+		count += sprucewood;
+		count += birchwood;
+		return count;
+	}
+
+	return count;
+}
+
 std::string itemTypeToString(ItemType t) {
 	switch (t) {
 		case ItemType::Strawberry: return "Strawberry";
@@ -29,7 +57,7 @@ void printInsert(Item i) {
 	defaultLogger.infoLog("storage +=", i.count, " ", itemTypeToString(i.type));
 }
 
-void Storage::insertItems(Item i){
+void Storage::insertItems(Item i,bool isSilent){
 	
 	auto index = doesItemTypeExist(i.type);
 	if (!index) {
@@ -39,7 +67,7 @@ void Storage::insertItems(Item i){
 		m_items[index.value()].count += i.count;
 	}
 
-
+	if(!isSilent)
 	printInsert(i);
 }
 
@@ -70,6 +98,15 @@ bool Storage::doesCategoryExist(ItemCategory cat) {
 		else return false;
 	}
 	if (cat == ItemCategory::Material) {
+		auto oakwood = doesItemTypeExist(ItemType::Oak);
+		auto sprucewood = doesItemTypeExist(ItemType::Spruce);
+		auto birchwood = doesItemTypeExist(ItemType::Birch);
+
+		if (oakwood || sprucewood || birchwood) return true;
+		else return false;
+	}
+
+	if (cat == ItemCategory::Wood) {
 		auto oakwood = doesItemTypeExist(ItemType::Oak);
 		auto sprucewood = doesItemTypeExist(ItemType::Spruce);
 		auto birchwood = doesItemTypeExist(ItemType::Birch);

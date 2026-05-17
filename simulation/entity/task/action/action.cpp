@@ -33,7 +33,7 @@ void WaitAction::tick(EntityState&) {
 	else m_isDone = true;
 }
 
-void DumpToStorageAction::tick(EntityState& ent) {
+void DumpToTownHallStorageAction::tick(EntityState& ent) {
 	auto townHallPos = ent.m_wState.m_structures[0]->m_pos;
 	uint16_t townHallPosX = townHallPos.x;
 	uint16_t townHallPosY = townHallPos.y;
@@ -51,7 +51,7 @@ void DumpToStorageAction::tick(EntityState& ent) {
 
 	auto townHallPtr = reinterpret_cast<TownHall*>(ent.m_wState.m_structures[0].get());
 
-	townHallPtr->inv.insertItems(Item{ent.m_haul.type,ent.m_haul.count});
+	townHallPtr->inv.insertItems(Item{ent.m_haul.type,ent.m_haul.count},false);
 	ent.m_haul = {};
 	m_isDone = true;
 }
@@ -75,7 +75,7 @@ constexpr std::string_view ItemCategoryToString(ItemCategory category) {
 	}
 }
 
-void GetItemFromStorageAction::tick(EntityState& ent) {
+void GetItemFromTownHallStorageAction::tick(EntityState& ent) {
 
 	auto townhallPtr= dynamic_cast<TownHall*>(ent.m_wState.m_structures[0].get());
 
@@ -122,10 +122,27 @@ void ConsumeHaulAction::tick(EntityState& ent) {
 	}
 }
 
-GetItemFromStorageAction::GetItemFromStorageAction(ItemCategory itemCategory, uint64_t count): 
+GetItemFromTownHallStorageAction::GetItemFromTownHallStorageAction(ItemCategory itemCategory, uint64_t count): 
 	m_itemCategory(itemCategory),
 	m_count(count) {}
-GetItemFromStorageAction::GetItemFromStorageAction(ItemType itemType, uint64_t count): 
+GetItemFromTownHallStorageAction::GetItemFromTownHallStorageAction(ItemType itemType, uint64_t count): 
 	m_itemCategory(ItemCategory::Specific),
 	m_specificType(itemType),
 	m_count(count){}
+
+
+DumpToBuildingStorageAction::DumpToBuildingStorageAction(uint16_t id): m_structureIndex(id){}
+
+void DumpToBuildingStorageAction::tick(EntityState& ent) {
+
+	auto structureptr = ent.m_wState.m_structures[m_structureIndex].get();
+	if (structureptr->getType() != StructureType::Building) {
+		defaultLogger.warningLog("tried to insert materials to not a building");
+		m_isDone = true;
+		return;
+	}
+	
+	auto buildingptr = dynamic_cast<Buildable*>(structureptr);
+	buildingptr->insertMaterials(ent);
+	m_isDone = true;
+}

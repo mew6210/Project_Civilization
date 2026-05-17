@@ -179,6 +179,85 @@ void TownHall::delegateGatherWoodTreeTask() {
 	defaultLogger.infoLog("gather wood, entID: ", entityId.value(), "strID: ", treeId.value());
 }
 
+std::vector<std::pair<size_t,std::vector<ItemCategory>>> TownHall::getBuildingsAndNeeds() {
+	std::vector<std::pair<size_t, std::vector<ItemCategory>>> vec = {};
+	for (size_t i = 0; i < m_simState.m_structures.size();i++) {
+
+		if (m_simState.m_structures[i]->getType() == StructureType::Building) {
+			auto buildableptr = dynamic_cast<Buildable*>(m_simState.m_structures[i].get());
+			if (buildableptr->checkisBuilt()) continue;
+			if (buildableptr->isClaimed())    continue;
+			vec.push_back({ i,buildableptr->getNeededItems() });
+		}
+
+	}
+	return vec;
+}
+
+std::vector<ItemCategory> TownHall::getCurrentTownHallMaterialsAvailable() {
+	std::vector<ItemCategory> vec;
+
+	if (inv.howManyFromCategoryExist(ItemCategory::Wood) > 10) vec.push_back(ItemCategory::Wood);
+	if (inv.howManyFromCategoryExist(ItemCategory::Food) > 10) vec.push_back(ItemCategory::Food);
+	//probably add stone too later
+	return vec;
+}
+
+uint16_t TownHall::countBuiltHouses() {
+	uint16_t counter = 0;
+	for (const auto& st : m_simState.m_structures) {
+		if (st->getType() == StructureType::House) 
+			counter++;
+	}
+	return counter;
+}
+
+std::optional<std::pair<uint16_t, ItemCategory>> TownHall::findBuildingToBuild() {
+
+	auto buildings = getBuildingsAndNeeds();
+	auto available = getCurrentTownHallMaterialsAvailable();
+
+	for (const auto& [id, neededItems] : buildings) {
+
+		for (const auto& catNeeded : neededItems) {
+			if (std::count(available.begin(), available.end(), catNeeded) != 0) return std::make_pair(id, catNeeded);
+			else continue;
+		}
+	}
+	return std::nullopt;
+}
+
+void TownHall::delegateBuildBuildingsTask() {
+	if (countBuiltHouses() >= m_simState.m_entities.size()) {
+		return;
+	}
+
+	auto entityId = findNotBusyEntityId();
+	if (!entityId) {
+		return;
+	}
+
+	auto building = findBuildingToBuild();
+	if (!building) {
+		return;
+	}
+
+	auto entityIndex = getEntityVectorIndexByEntityId(entityId.value()); //needed, because entityId != entity's index in a vector
+
+	PrioritizedTask tsk{
+		std::make_unique<HaulMaterialToBuilding>(
+			building.value().second,
+			building.value().first,
+			m_simState
+			),
+		10
+	};
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk), false);
+
+	auto buildingptr = reinterpret_cast<Buildable*>(m_simState.m_structures[building.value().first].get());
+	defaultLogger.infoLog("haul to building, entID: ", entityId.value(), "strID: ", building.value().first);
+}
+
 /*
 	Each tick townhall should evaluate its needs, and delegate tasks to fullfill those needs
 */
@@ -187,15 +266,106 @@ void TownHall::tick(){
 	if (tickCounter % 20 == 0) {
 		delegateGatherBushTask();
 		delegateGatherWoodTreeTask();
+		delegateBuildBuildingsTask();
+		handleBuildings();
 	}
 
 	tickCounter++;
 }
 
 void TownHall::addStartingItems() {
-	inv.insertItems(Item{ ItemType::Blueberry,30 });
-	inv.insertItems(Item{ ItemType::Strawberry,30 });
-	inv.insertItems(Item{ ItemType::Raspberry,30 });
+	inv.insertItems(Item{ ItemType::Blueberry,30 },true);
+	inv.insertItems(Item{ ItemType::Strawberry,30 },true);
+	inv.insertItems(Item{ ItemType::Raspberry,30 },true);
+}
+
+void TownHall::handleBuildings() {
+	queueBuildings();
+}
+
+void TownHall::queueBuildings() {
+
+	if (inv.howManyFromCategoryExist(ItemCategory::Wood) > 30 
+		&& m_BuildingsScheduled < 2) {
+		
+		m_buildingQueue.push_back(std::make_unique<Buildable>(BuildableType::House, getSuitableHousePosition()));
+		m_BuildingsScheduled++;
+		defaultLogger.infoLog("delegated building a house");
+	}
+
+}
+
+
+//AI GENERATED
+sf::Vector2f TownHall::getSuitableHousePosition()
+{
+	constexpr float HOUSE_RADIUS = 8.f;      // approximate house size
+	constexpr float REQUIRED_GAP = 5.f;
+	constexpr float MIN_DISTANCE = HOUSE_RADIUS * 2.f + REQUIRED_GAP;
+
+	constexpr float SEARCH_STEP = 10.f;
+	constexpr float MAX_SEARCH_RADIUS = 500.f;
+
+	const float worldWidth = m_simState.getMapSize().m_width;
+	const float worldHeight = m_simState.getMapSize().m_height;
+
+	// Collect existing structure positions
+	std::vector<sf::Vector2f> positions;
+
+	for (auto& structure : m_simState.m_structures)
+	{
+		positions.push_back(structure->m_pos);
+	}
+
+	auto isValidPosition = [&](const sf::Vector2f& pos)
+		{
+			// Bounds check
+			if (pos.x < 0 || pos.y < 0 ||
+				pos.x > worldWidth || pos.y > worldHeight)
+			{
+				return false;
+			}
+
+			// Distance check
+			for (const auto& other : positions)
+			{
+				float dx = pos.x - other.x;
+				float dy = pos.y - other.y;
+
+				float distSq = dx * dx + dy * dy;
+
+				if (distSq < MIN_DISTANCE * MIN_DISTANCE)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		};
+
+	// Spiral/radial search
+	for (float radius = SEARCH_STEP;
+		radius <= MAX_SEARCH_RADIUS;
+		radius += SEARCH_STEP)
+	{
+		for (float angle = 0.f; angle < 360.f; angle += 15.f)
+		{
+			float rad = angle * 3.14159265f / 180.f;
+
+			sf::Vector2f candidate(
+				m_pos.x + std::cos(rad) * radius,
+				m_pos.y + std::sin(rad) * radius
+			);
+
+			if (isValidPosition(candidate))
+			{
+				return candidate;
+			}
+		}
+	}
+
+	// fallback
+	return m_pos;
 }
 
 TownHall::TownHall(sf::Vector2f pos, SimulationState& simState): Structure(pos),m_simState(simState) {
