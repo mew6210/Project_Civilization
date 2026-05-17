@@ -119,7 +119,7 @@ void Storage::renderItemList(sf::RenderWindow& win) {
 	for (int i = 0; i < m_items.size(); i++) {
 		inventory += itemTypeToString(m_items[i].type) + " " + std::to_string(m_items[i].count) + "\n";
 	}
-	sf::Font font("Pixel.ttf");
+	sf::Font font("fonts/Pixel.ttf");
 	sf::Text text(font);
 	text.setString(inventory);
 	text.setCharacterSize(18);
