@@ -32,4 +32,5 @@ public:
 	void addStructure(sf::Vector2f, StructureType);
 	SimulationState(const MapData&);
 	void addBuilding(sf::Vector2f, BuildableType);
+	void spawnBabyEntity(sf::Vector2f);
 };

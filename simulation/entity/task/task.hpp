@@ -59,3 +59,10 @@ class HaulMaterialToBuilding : public Task {
 public:
 	HaulMaterialToBuilding(ItemCategory,uint16_t, SimulationState&);
 };
+
+class GoToHouseAndMate : public Task {
+	void tick(EntityState& entState) override;
+	uint16_t m_houseId;
+public:
+	GoToHouseAndMate(bool birthing, uint16_t stId, SimulationState& simState, uint16_t entId);
+};

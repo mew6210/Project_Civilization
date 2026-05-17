@@ -33,6 +33,11 @@ class TownHall : public Structure {
 	std::vector<ItemCategory> getCurrentTownHallMaterialsAvailable();
 	uint16_t countBuiltHouses();
 
+	//mating-related
+	std::optional<std::pair<uint16_t,uint16_t>> findSuitablePair();
+	uint16_t findNotBusyHouse();
+	void delegateMatingTask();
+
 	void addStartingItems();
 public:
 

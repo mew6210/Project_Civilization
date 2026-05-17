@@ -17,3 +17,13 @@ void House::render(sf::RenderWindow& win) {
 void House::tick(){}
 
 House::House(sf::Vector2f pos): Structure(pos) {}
+
+void House::checkIn(uint16_t id){
+	m_visitorsIds.push_back(id);
+}
+
+void House::checkOut(uint16_t id) {
+	auto it = std::find(m_visitorsIds.begin(), m_visitorsIds.end(), id);
+	if(it!=m_visitorsIds.end())
+		m_visitorsIds.erase(it);
+}

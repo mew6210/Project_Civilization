@@ -1,6 +1,7 @@
 #include "task.hpp"
 #include "../../simulationstate/simulationstate.hpp"
 #include <iostream>
+#include "../../structure/house/house.hpp"
 
 /*
 	Chooses a place in 50 tiles radius and creates an action to go to that place
@@ -271,6 +272,43 @@ void HaulMaterialToBuilding::tick(EntityState& ent) {
 				auto buildingPtr = reinterpret_cast<Buildable*>(ent.m_wState.m_structures[m_structureIndex].get());
 				buildingPtr->unclaim();
 				m_isDone = true;
+			}
+		}
+
+	}
+}
+
+GoToHouseAndMate::GoToHouseAndMate(bool birthing,uint16_t stId, SimulationState& simState,uint16_t entId) : m_houseId(stId) {
+
+	auto housePtr = dynamic_cast<House*>(simState.m_structures[stId].get());
+
+	m_actions.push_back(std::make_unique<MoveToAction>((uint16_t)housePtr->m_pos.x, (uint16_t)housePtr->m_pos.y));
+	m_actions.push_back(std::make_unique<WaitForMateAction>(stId,birthing,simState,entId));
+}
+
+void GoToHouseAndMate::tick(EntityState& entState) {
+
+	if (!m_isDone) {
+		if (m_actionStep == 0) {
+			if (!m_actions[0]->m_isDone)
+				m_actions[0]->tick(entState);
+			else {
+				m_actionStep = 1;
+			}
+		}
+
+		if (m_actionStep == 1) {
+			if (!m_actions[1]->m_isDone)
+				m_actions[1]->tick(entState);
+			else {
+				m_isDone = true;
+				auto mateActionPtr = dynamic_cast<WaitForMateAction*>(m_actions[1].get());
+				entState.setMatingCooldown();
+				if (mateActionPtr->m_wasSuccessfull && mateActionPtr->m_birthingAction) {
+					auto housePtr = dynamic_cast<House*>(entState.m_wState.m_structures[m_houseId].get());
+					entState.m_wState.spawnBabyEntity(housePtr->m_pos);
+				}
+
 			}
 		}
 

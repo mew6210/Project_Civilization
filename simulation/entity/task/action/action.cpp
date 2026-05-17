@@ -4,6 +4,7 @@
 #include "../../../structure/townhall/townhall.hpp"
 #include <iostream>
 #include "../../../../utility/logger/logger.hpp"
+#include "../../../structure/house/house.hpp"
 
 void MoveToAction::tick(EntityState& entState) {
 
@@ -145,4 +146,30 @@ void DumpToBuildingStorageAction::tick(EntityState& ent) {
 	auto buildingptr = dynamic_cast<Buildable*>(structureptr);
 	buildingptr->insertMaterials(ent);
 	m_isDone = true;
+}
+
+void WaitForMateAction::tick(EntityState& ent) {
+
+	static auto housePtr = dynamic_cast<House*>(ent.m_wState.m_structures[m_houseIndex].get());
+	if (housePtr->getVisitorsAmount() > 1) {
+		m_isDone = true;
+		m_wasSuccessfull = true;
+		housePtr->checkOut(ent.m_id);
+		return;
+	}
+
+	if (m_tickCounter > 600) {
+		m_isDone = true;
+		housePtr->checkOut(ent.m_id);
+		return;
+	}
+
+	m_tickCounter++;
+}
+
+WaitForMateAction::WaitForMateAction(uint16_t stIndex,bool birthing,SimulationState& simState,uint16_t entityId): m_houseIndex(stIndex),m_birthingAction(birthing){
+
+	auto housePtr = dynamic_cast<House*>(simState.m_structures[stIndex].get());
+	housePtr->checkIn(entityId);
+
 }

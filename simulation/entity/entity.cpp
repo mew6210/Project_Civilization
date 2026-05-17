@@ -13,6 +13,7 @@ namespace {
 	constexpr int k_GoEatTaskSatiationLimit = 30;
 	constexpr int k_AgingTickCount = 200;
 	constexpr int k_EvaluateDeathTickCount = 100;
+	constexpr int k_MatingCd = 500;
 }
 
 /*
@@ -94,6 +95,7 @@ void Entity::updateStats() {
 	if (m_entState.m_health == 0) m_entState.m_isDead = true;
 
 	m_tickCounter++;
+	if (m_entState.m_matingCd != 0) m_entState.m_matingCd--;
 }
 
 void Entity::addHungryTask() {
