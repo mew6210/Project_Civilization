@@ -202,6 +202,14 @@ std::vector<ItemCategory> TownHall::getCurrentTownHallMaterialsAvailable() {
 	return vec;
 }
 
+uint16_t TownHall::countBuiltHouses() {
+	uint16_t counter = 0;
+	for (const auto& st : m_simState.m_structures) {
+		if (st->getType() == StructureType::House) 
+			counter++;
+	}
+	return counter;
+}
 
 std::optional<std::pair<uint16_t, ItemCategory>> TownHall::findBuildingToBuild() {
 
@@ -218,63 +226,10 @@ std::optional<std::pair<uint16_t, ItemCategory>> TownHall::findBuildingToBuild()
 	return std::nullopt;
 }
 
-/*
-//AI GENERATED
-std::optional<std::pair<uint16_t, ItemCategory>> TownHall::findBuildingToBuild()
-{
-	auto buildings = getBuildingsAndNeeds();
-	auto available = getCurrentTownHallMaterialsAvailable();
-
-	uint16_t bestBuildingId = 0;
-	ItemCategory neededItem{};
-	size_t bestScore = 0;
-
-	bool found = false;
-
-	for (const auto& [id, neededItems] : buildings)
-	{
-		size_t matched = 0;
-		std::optional<ItemCategory> firstMissing;
-
-		for (const auto& item : neededItems)
-		{
-			auto it = std::find(available.begin(), available.end(), item);
-
-			if (it != available.end())
-			{
-				matched++;
-			}
-			else if (!firstMissing.has_value())
-			{
-				firstMissing = item;
-			}
-		}
-
-		// already fully buildable
-		if (matched == neededItems.size() && neededItems.size()!=0)
-		{
-			return std::make_pair(id, buildings[matched].second[0]);
-		}
-
-		// best partial match so far
-		if (matched > bestScore && firstMissing.has_value())
-		{
-			bestScore = matched;
-			bestBuildingId = id;
-			neededItem = *firstMissing;
-			found = true;
-		}
-	}
-
-	if (found)
-	{
-		return std::make_pair(bestBuildingId, neededItem);
-	}
-
-	return std::nullopt;
-}
-*/
 void TownHall::delegateBuildBuildingsTask() {
+	if (countBuiltHouses() >= m_simState.m_entities.size()) {
+		return;
+	}
 
 	auto entityId = findNotBusyEntityId();
 	if (!entityId) {

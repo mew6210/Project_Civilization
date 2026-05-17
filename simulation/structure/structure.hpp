@@ -1,6 +1,9 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #pragma once
 enum class StructureType {
+	House,
+	Quarry,
+	Farm,
 	TownHall,
 	Bush,
 	Tree,
@@ -14,6 +17,8 @@ public:
 	virtual void render(sf::RenderWindow&) = 0;
 	virtual void tick() = 0;
 	virtual StructureType getType() const = 0;
+
+	virtual ~Structure() = default;
 
 	Structure(sf::Vector2f pos);
 };

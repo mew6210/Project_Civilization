@@ -3,6 +3,7 @@
 #include <iostream>
 #include "../utility/logger/logger.hpp"
 #include "structure/townhall/townhall.hpp"
+#include "structure/house/house.hpp"
 
 Simulation::Simulation(const MapData& md) : m_wState(md) {
 	m_wState.m_entities.reserve(1000);
@@ -32,6 +33,39 @@ void Simulation::simulateEntities() {
 
 }
 
+void Simulation::promoteBuilding(size_t stIndex) {
+	auto buildingPtr = dynamic_cast<Buildable*>(m_wState.m_structures[stIndex].get());
+	auto buildingPos = buildingPtr->m_pos;
+	if (buildingPtr->getBuildingType() == BuildableType::House) {
+		m_wState.m_structures[stIndex] = std::make_unique<House>(buildingPos);
+		auto townhallPtr = dynamic_cast<TownHall*>(m_wState.m_structures[0].get());
+		townhallPtr->m_BuildingsScheduled--;
+	}
+	if (buildingPtr->getBuildingType() == BuildableType::Farm) {
+		defaultLogger.errorLog(false, "NOT YET IMPLEMENTED");
+	}
+	if (buildingPtr->getBuildingType() == BuildableType::Quarry) {
+		defaultLogger.errorLog(false, "NOT YET IMPLEMENTED");
+	}
+
+}
+
+void Simulation::promoteBuildings() {
+	std::vector<size_t> buildingsToPromoteIndexes = {};
+	for (size_t i = 0; i < m_wState.m_structures.size();i++) {
+		if (m_wState.m_structures[i]->getType() == StructureType::Building) {
+			auto buildingPtr = dynamic_cast<Buildable*>(m_wState.m_structures[i].get());
+			if (buildingPtr->checkisBuilt()) buildingsToPromoteIndexes.push_back(i);
+		}
+	}
+
+	for (auto& building : buildingsToPromoteIndexes) {
+		promoteBuilding(building);
+		defaultLogger.infoLog("promoted stuff omg");
+	}
+
+}
+
 void Simulation::simulateStructures(){
 
 	auto townHallPtr = dynamic_cast<TownHall*>(m_wState.m_structures[0].get());
@@ -44,6 +78,8 @@ void Simulation::simulateStructures(){
 	for (auto& structure : m_wState.m_structures) {
 		structure->tick();
 	}
+
+	promoteBuildings();
 }
 
 void Simulation::simulate() {
