@@ -15,4 +15,5 @@ public:
 	void insertItems(Item,bool);
 	bool requestItems(EntityState&, Item);
 	bool requestCategory(EntityState&,ItemCategory, uint64_t);
+	void renderItemList(sf::RenderWindow& win);
 };

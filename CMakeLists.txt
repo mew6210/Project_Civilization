@@ -24,3 +24,12 @@ add_executable (${PROJECT_NAME}
 "simulation/simulationstate/simulationstate.cpp" "simulation/entity/task/task.cpp" "simulation/entity/task/action/action.cpp" "simulation/entity/entitystate/entitystate.cpp" "simulation/structure/structure.cpp" "simulation/structure/bush/bush.cpp" "simulation/structure/tree/tree.cpp" "simulation/structure/townhall/townhall.cpp" "simulation/structure/house/house.cpp" "simulation/structure/townhall/storage/storage.cpp" "utility/logger/logger.cpp" "simulation/structure/buildable/buildable.cpp" "simulation/structure/buildable/recipe/recipe.cpp")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES})
+
+set(FONT ${CMAKE_SOURCE_DIR}/assets/fonts/Pixel.ttf)
+set(FONT_DESTINATION ${CMAKE_BINARY_DIR}/fonts/Pixel.ttf)
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    ${FONT} ${FONT_DESTINATION}
+    COMMENT "Copying font to the font directory"
+)

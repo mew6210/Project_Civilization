@@ -21,6 +21,7 @@ void TownHall::render(sf::RenderWindow& win){
 	shape.setFillColor(k_TownHallColor);
 
 	win.draw(shape);
+	inv.renderItemList(win);
 }
 
 /*
