@@ -35,18 +35,25 @@ struct WaitAction : public Action {
 	void tick(EntityState&) override;
 };
 
-struct DumpToStorageAction : public Action {	//TODO: assumes that u just dump everything u have, will probably have to be changed later
+struct DumpToTownHallStorageAction : public Action {	//TODO: assumes that u just dump everything u have, will probably have to be changed later
 	void tick(EntityState&) override;
 };
 
-struct GetItemFromStorageAction : public Action {
+struct DumpToBuildingStorageAction : public Action {
+	uint16_t m_structureIndex;
+	void tick(EntityState&)override;
+
+	DumpToBuildingStorageAction(uint16_t);
+};
+
+struct GetItemFromTownHallStorageAction : public Action {
 	
 	ItemCategory m_itemCategory;
 	ItemType m_specificType;
 	uint64_t m_count;
 
-	GetItemFromStorageAction(ItemCategory, uint64_t);
-	GetItemFromStorageAction(ItemType, uint64_t);
+	GetItemFromTownHallStorageAction(ItemCategory, uint64_t);
+	GetItemFromTownHallStorageAction(ItemType, uint64_t);
 	void tick(EntityState&) override;
 public:
 	bool m_isFound = false;
