@@ -8,6 +8,7 @@ class House : public Structure {
 	void render(sf::RenderWindow&) override;
 	void tick() override;
 
+public:
 	House(sf::Vector2f);
 	StructureType getType() const override { return StructureType::House; }
 };
