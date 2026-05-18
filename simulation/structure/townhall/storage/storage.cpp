@@ -146,9 +146,36 @@ bool Storage::requestCategory(EntityState& ent, ItemCategory cat, uint64_t count
 				return true;
 			}
 		}
-		return false;
-
 	}
+
+	if (cat == ItemCategory::Wood) {
+
+		auto oak = doesItemTypeExist(ItemType::Oak);
+		if (oak.has_value()) {
+			if (m_items[oak.value()].count > count) {
+				requestItems(ent, { ItemType::Oak,count });
+				return true;
+			}
+		}
+
+		auto spruce = doesItemTypeExist(ItemType::Spruce);
+		if (spruce.has_value()) {
+			if (m_items[spruce.value()].count > count) {
+				requestItems(ent, { ItemType::Spruce,count });
+				return true;
+			}
+		}
+
+		auto birch = doesItemTypeExist(ItemType::Birch);
+		if (birch.has_value()) {
+			if (m_items[birch.value()].count > count) {
+				requestItems(ent, { ItemType::Birch,count });
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void Storage::renderItemList(sf::RenderWindow& win) {
