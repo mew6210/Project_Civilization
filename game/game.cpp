@@ -47,12 +47,13 @@ void Game::checkTooltipInput() {
     float oldScale = m_timeScale;
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0)) m_timeScale = 0.0f; //simulation pause
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9)) m_timeScale = 1.0f; //1x speed
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8)) m_timeScale = 2.0f; //2x speed
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num7)) m_timeScale = 4.0f; //4x speed
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9)) m_timeScale = 0.5f; //0.5x speed
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8)) m_timeScale = 1.0f; //1x speed
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num7)) m_timeScale = 2.0f; //2x speed
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num6)) m_timeScale = 4.0f; //4x speed
 
     if (m_timeScale != oldScale) {
-        std::string status = (m_timeScale == 0.0f) ? "PAUSED" : std::to_string((int)m_timeScale) + "x";
+        std::string status = (m_timeScale == 0.0f) ? "PAUSED" : std::format("{:.1f}x", m_timeScale);;
 
         defaultLogger.infoLog("simulation speed changed to: " + status);
     }
