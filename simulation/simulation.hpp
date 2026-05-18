@@ -4,9 +4,13 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "mapsize/mapsize.hpp"
 #include "simulationstate/simulationstate.hpp"
+
 #include "../game/ActiveTool/ActiveTool.hpp"
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Font.hpp>
+
+#include "../game/handleinput/handleinput.hpp"
+
 
 /*
 	@brief represents simulation state 
