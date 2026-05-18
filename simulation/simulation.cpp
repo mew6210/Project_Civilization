@@ -4,6 +4,8 @@
 #include "../utility/logger/logger.hpp"
 #include "structure/townhall/townhall.hpp"
 #include "structure/house/house.hpp"
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Font.hpp>
 
 Simulation::Simulation(const MapData& md) : m_wState(md) {
 	m_wState.m_entities.reserve(1000);
@@ -111,7 +113,19 @@ void Simulation::renderStructures(sf::RenderWindow& window) {
 	}
 }
 
+void Simulation::renderEntityAmount(sf::RenderWindow& window) {
+	sf::Font font("fonts/Pixel.ttf");
+	sf::Text text(font);
+	std::string entityAmount= "Citizens: " + std::to_string(m_wState.m_entities.size());
+	text.setString(entityAmount);
+	text.setCharacterSize(18);
+	text.setFillColor(sf::Color(255, 255, 255, 200));
+	text.setPosition({ 250, 0});
+	window.draw(text);
+}
+
 void Simulation::render(sf::RenderWindow& window) {
 	renderEntities(window);
 	renderStructures(window);
+	renderEntityAmount(window);
 }

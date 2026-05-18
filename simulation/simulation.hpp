@@ -19,6 +19,7 @@ class Simulation {
 
 	void renderEntities(sf::RenderWindow&);
 	void renderStructures(sf::RenderWindow&);
+	void renderEntityAmount(sf::RenderWindow&);
 	void simulateEntities();
 	void simulateStructures();
 	void promoteBuildings();
