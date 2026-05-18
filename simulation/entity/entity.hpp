@@ -22,16 +22,19 @@ struct Entity {
 
 	Entity(SimulationState& wState) : m_entState(wState) {}
 	Entity(SimulationState& wState, uint16_t posX, uint16_t posY) :m_entState(wState,posX,posY) {}
+	Entity(SimulationState& wState, uint16_t posX, uint16_t posY, uint32_t matingCd) :m_entState(wState, posX, posY) { m_entState.m_matingCd = matingCd; }
 	void render(sf::RenderWindow& window) const;
 	void sim();
 	void delegateTask(PrioritizedTask tsk, bool) const;
+	
 
 private:
 	void addHungryTask();
 	void doCurrentTask();
 	void updateStats();
 	void addTasks();
-	
+	void evalDeath();
+
 	void addTasksWhenSome();
 	void addTasksWhenNone();
 	void handleIsAcceptingTasks();

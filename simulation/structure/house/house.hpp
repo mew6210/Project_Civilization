@@ -2,7 +2,7 @@
 
 class House : public Structure {
 
-	uint32_t m_ownerId = 0; //id of an entity
+	std::vector<uint16_t> m_visitorsIds;
 	bool m_isClaimed = false;
 
 	void render(sf::RenderWindow&) override;
@@ -10,5 +10,8 @@ class House : public Structure {
 
 public:
 	House(sf::Vector2f);
+	uint16_t getVisitorsAmount() const { return (uint16_t)m_visitorsIds.size(); }
+	void checkIn(uint16_t id);
+	void checkOut(uint16_t id);
 	StructureType getType() const override { return StructureType::House; }
 };

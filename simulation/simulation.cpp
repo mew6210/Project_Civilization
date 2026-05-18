@@ -21,7 +21,12 @@ void Simulation::simulateEntities() {
 		it != m_wState.m_entities.end(); ) {
 
 		if ((*it)->m_entState.m_isDead) {
-			defaultLogger.warningLog("entity died, id: ", (*it)->m_entState.m_id);
+			if((*it)->m_entState.m_naturalCauses)
+				defaultLogger.warningLog("entity died from natural causes, id: ", (*it)->m_entState.m_id," age: ",(int)(*it)->m_entState.m_age);
+			else 
+				defaultLogger.warningLog("entity died, id: ", (*it)->m_entState.m_id);
+
+
 			it = m_wState.m_entities.erase(it);
 		}
 			

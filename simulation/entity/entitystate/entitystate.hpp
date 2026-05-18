@@ -19,11 +19,14 @@ struct EntityState {
 
 	SimulationState& m_wState;
 
+	uint8_t m_age = 18;
 	uint64_t m_health = 100;
 	uint64_t m_satiation = 100;
 	bool m_isDead = false;
-	
+	bool m_naturalCauses = false;
+	uint32_t m_matingCd = 0;
 
+	void setMatingCooldown();
 	EntityState(SimulationState& wState) : m_wState(wState),m_id(++ID) {}
 	EntityState(SimulationState& wState,uint16_t posX,uint16_t posY) : m_wState(wState),m_posX(posX),m_posY(posY),m_id(++ID) {}
 

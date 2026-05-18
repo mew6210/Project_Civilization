@@ -2,6 +2,7 @@
 #include "../structure/bush/bush.hpp"
 #include "../structure/tree/tree.hpp"
 #include "../structure/townhall/townhall.hpp"
+#include "../../utility/logger/logger.hpp"
 
 SimulationState::SimulationState(const MapData& md) : rng(std::random_device{}()) {
 	mapSize.m_height = md.getHeight();
@@ -69,4 +70,9 @@ void SimulationState::addBuilding(sf::Vector2f pos, BuildableType type) {
 
 	m_structures.push_back(std::make_unique<Buildable>(type,pos));
 
+}
+
+void SimulationState::spawnBabyEntity(sf::Vector2f pos) {
+	defaultLogger.infoLog("baby born");
+	m_entities.push_back(std::make_unique<Entity>(*this, (uint16_t)pos.x, (uint16_t)pos.y,2000));
 }

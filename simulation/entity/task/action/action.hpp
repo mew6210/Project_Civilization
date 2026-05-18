@@ -62,3 +62,15 @@ public:
 struct ConsumeHaulAction : public Action {
 	void tick(EntityState&) override;
 };
+
+struct WaitForMateAction : public Action {
+	uint64_t m_tickCounter = 0;
+	uint16_t m_houseIndex = 0;
+	bool m_wasSuccessfull = false;
+	bool m_birthingAction = false;
+
+public:
+	void tick(EntityState&) override;
+
+	WaitForMateAction(uint16_t stIndex, bool birthing, SimulationState& simState, uint16_t entityId);
+};

@@ -258,6 +258,78 @@ void TownHall::delegateBuildBuildingsTask() {
 	defaultLogger.infoLog("haul to building, entID: ", entityId.value(), "strID: ", building.value().first);
 }
 
+uint16_t TownHall::findNotBusyHouse() {
+
+	for (uint16_t i = 0; i < m_simState.m_structures.size();i++) {
+		if (m_simState.m_structures[i]->getType() == StructureType::House) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+std::optional<std::pair<uint16_t, uint16_t>> TownHall::findSuitablePair() {
+
+	std::optional<uint16_t> firstEntity = std::nullopt;
+	std::optional<uint16_t> secondEntity = std::nullopt;
+
+	for (const auto& ent : m_simState.m_entities) {
+
+		if (ent->m_tasks.size() == 1) {
+			if (ent->m_tasks[0].priority == 0 && !firstEntity.has_value() && ent->m_entState.m_matingCd == 0) {
+				firstEntity = ent->m_entState.m_id;
+			}
+			else if (ent->m_tasks[0].priority == 0 && firstEntity.has_value() && ent->m_entState.m_matingCd == 0) {
+				secondEntity = ent->m_entState.m_id;
+			}
+		}
+
+	}
+	if (firstEntity.has_value() && secondEntity.has_value()) {
+		return std::make_pair(firstEntity.value(), secondEntity.value());
+	}
+	else return std::nullopt;
+}
+
+void TownHall::delegateMatingTask() {
+
+	auto entIds = findSuitablePair();
+	if (!entIds) {
+		return;
+	}
+	auto houseId = findNotBusyHouse();
+	if (!houseId) {
+		return;
+	}
+	auto entity1Index = getEntityVectorIndexByEntityId(entIds.value().first);
+	auto entity2Index = getEntityVectorIndexByEntityId(entIds.value().second);
+
+	PrioritizedTask tsk1{
+		std::make_unique<GoToHouseAndMate>(
+			true,
+			houseId,
+			m_simState,
+			entIds.value().first
+			),
+		20
+	};
+
+	PrioritizedTask tsk2{
+		std::make_unique<GoToHouseAndMate>(
+			false,
+			houseId,
+			m_simState,
+			entIds.value().second
+			),
+		20
+	};
+
+	m_simState.m_entities[entity1Index]->delegateTask(std::move(tsk1), true);
+	m_simState.m_entities[entity2Index]->delegateTask(std::move(tsk2), true);
+
+	defaultLogger.infoLog("mating, 1entID: ", entIds.value().first, " 2entID: ", entIds.value().second," houseId: ", houseId);
+}
+
 /*
 	Each tick townhall should evaluate its needs, and delegate tasks to fullfill those needs
 */
@@ -268,6 +340,10 @@ void TownHall::tick(){
 		delegateGatherWoodTreeTask();
 		delegateBuildBuildingsTask();
 		handleBuildings();
+
+		
+		delegateMatingTask();
+		
 	}
 
 	tickCounter++;
