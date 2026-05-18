@@ -8,6 +8,7 @@ namespace {
 	constexpr uint8_t k_GatherThresholdAmount = 8;
 	constexpr uint8_t k_GatherTaskPriority = 10;
 	constexpr sf::Color k_TownHallColor = sf::Color(229, 232, 23);
+	constexpr int k_GoEatTaskSatiationLimit = 30;
 }
 
 /*
@@ -330,6 +331,24 @@ void TownHall::delegateMatingTask() {
 	defaultLogger.infoLog("mating, 1entID: ", entIds.value().first, " 2entID: ", entIds.value().second," houseId: ", houseId);
 }
 
+void TownHall::delegateEatingTasks() {
+
+	for (auto& ent : m_simState.m_entities) {
+
+		if (ent->m_entState.m_satiation < k_GoEatTaskSatiationLimit && ent->m_tasks.size() == 1) {
+			if (ent->m_tasks[0].priority == 0) {
+				PrioritizedTask tsk = {
+					std::make_unique<GetFoodAndEatTask>(m_simState),
+					10
+				};
+				ent->delegateTask(std::move(tsk));
+			}
+		}
+
+	}
+
+}
+
 /*
 	Each tick townhall should evaluate its needs, and delegate tasks to fullfill those needs
 */
@@ -340,8 +359,7 @@ void TownHall::tick(){
 		delegateGatherWoodTreeTask();
 		delegateBuildBuildingsTask();
 		handleBuildings();
-
-		
+		delegateEatingTasks();
 		delegateMatingTask();
 		
 	}

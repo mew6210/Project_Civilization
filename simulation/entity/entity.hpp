@@ -24,13 +24,11 @@ struct Entity {
 	void render(sf::RenderWindow& window) const;
 	void sim();
 	void delegateTask(PrioritizedTask tsk) const;
-	
 
 private:
 	void doCurrentTask();
 	void updateStats();
 	void evalDeath();
-
 	bool isHungry();
 	bool isStarving();
 	bool isFull();
