@@ -4,7 +4,7 @@
 namespace {
 
 	constexpr uint8_t k_TicksNeededToGrow = 100;
-	constexpr uint8_t k_WoodLimit = std::numeric_limits<uint8_t>::max();
+	constexpr uint8_t k_WoodLimit = 30;
 	constexpr sf::Color k_TreeColor = sf::Color(115, 81, 37);
 }
 

@@ -359,13 +359,18 @@ void TownHall::delegateEatingTasks() {
 void TownHall::tick(){
 	
 	if (tickCounter % 20 == 0) {
-		delegateGatherBushTask();
-		delegateGatherWoodTreeTask();
-		delegateBuildBuildingsTask();
-		handleBuildings();
-		delegateEatingTasks();
 		delegateMatingTask();
+		delegateEatingTasks();
+		delegateBuildBuildingsTask();
 		
+		if (inv.howManyFromCategoryExist(ItemCategory::Food) < m_simState.m_entities.size() * 10) 
+			delegateGatherBushTask();
+		
+		
+		if(inv.howManyFromCategoryExist(ItemCategory::Wood) < 150)
+			delegateGatherWoodTreeTask();
+		
+		handleBuildings();
 	}
 
 	tickCounter++;

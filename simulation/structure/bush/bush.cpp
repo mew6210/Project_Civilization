@@ -6,7 +6,7 @@
 
 namespace {
 	constexpr uint8_t k_TicksNeededToGrow = 100;
-	constexpr uint8_t k_FruitLimit = std::numeric_limits<uint8_t>::max();
+	constexpr uint8_t k_FruitLimit = 30;
 	constexpr sf::Color k_BushColor = sf::Color::Magenta;
 }
 
