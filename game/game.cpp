@@ -43,13 +43,27 @@ void Game::checkTooltipInput() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2)) currentTool = ActiveTool::Entity;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3)) currentTool = ActiveTool::Tree;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4)) currentTool = ActiveTool::Bush;
+
+    float oldScale = m_timeScale;
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num0)) m_timeScale = 0.0f; //simulation pause
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9)) m_timeScale = 1.0f; //1x speed
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8)) m_timeScale = 2.0f; //2x speed
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num7)) m_timeScale = 4.0f; //4x speed
+
+    if (m_timeScale != oldScale) {
+        std::string status = (m_timeScale == 0.0f) ? "PAUSED" : std::to_string((int)m_timeScale) + "x";
+
+        defaultLogger.infoLog("simulation speed changed to: " + status);
+    }
 }
 
 void Game::advanceSimulation(sf::Clock& cl, float& accumulator, const float& dt) {
     
     float frameTime = cl.restart().asSeconds();
-    frameTime = std::min(frameTime, 0.25f);
-    accumulator += frameTime;
+    if (frameTime > 0.25f) frameTime = 0.25f;
+
+    accumulator += frameTime * m_timeScale;
 
     while (accumulator >= dt) {
         sim.simulate();

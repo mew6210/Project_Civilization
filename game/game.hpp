@@ -2,7 +2,8 @@
 #include "../map/map.hpp"
 #include "../map/mapView/mapview.hpp"
 #include "../simulation/simulation.hpp"
-#include "ActiveTool/ActiveTool.hpp"
+#include "handleinput/handleinput.hpp"
+#include "../utility/logger/logger.hpp"
 
 /*
 	@brief represents everything that is needed to start a game
@@ -13,6 +14,7 @@ class Game {
 	MapView mView;
 	Simulation sim;
 	ActiveTool currentTool = ActiveTool::None;
+	float m_timeScale = 1.0f;
 
 	void render(sf::RenderWindow&);
 	void advanceSimulation(sf::Clock&, float&, const float&);
