@@ -151,9 +151,18 @@ void DumpToBuildingStorageAction::tick(EntityState& ent) {
 void WaitForMateAction::tick(EntityState& ent) {
 
 	static auto housePtr = dynamic_cast<House*>(ent.m_wState.m_structures[m_houseIndex].get());
+	
+	if (!housePtr->isClaimed()) {
+		housePtr->checkOut(ent.m_id);
+		//defaultLogger.infoLog("mating assumed successfull");
+		m_wasSuccessfull = true;
+		m_isDone = true;
+		return;
+	}
 	if (housePtr->getVisitorsAmount() > 1) {
 		m_isDone = true;
 		m_wasSuccessfull = true;
+		housePtr->unclaim();
 		housePtr->checkOut(ent.m_id);
 		return;
 	}
@@ -167,9 +176,4 @@ void WaitForMateAction::tick(EntityState& ent) {
 	m_tickCounter++;
 }
 
-WaitForMateAction::WaitForMateAction(uint16_t stIndex,bool birthing,SimulationState& simState,uint16_t entityId): m_houseIndex(stIndex),m_birthingAction(birthing){
-
-	auto housePtr = dynamic_cast<House*>(simState.m_structures[stIndex].get());
-	housePtr->checkIn(entityId);
-
-}
+WaitForMateAction::WaitForMateAction(uint16_t stIndex,bool birthing,SimulationState& simState,uint16_t entityId): m_houseIndex(stIndex),m_birthingAction(birthing){}

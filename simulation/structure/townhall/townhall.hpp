@@ -17,6 +17,7 @@ class TownHall : public Structure {
 	//entity-related
 	std::optional<uint16_t> findNotBusyEntityId();
 	uint16_t getEntityVectorIndexByEntityId(uint16_t);
+	void delegateEatingTasks();
 
 	//tree-related
 	void delegateGatherWoodTreeTask();

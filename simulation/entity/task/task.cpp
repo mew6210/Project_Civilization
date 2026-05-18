@@ -281,6 +281,7 @@ void HaulMaterialToBuilding::tick(EntityState& ent) {
 GoToHouseAndMate::GoToHouseAndMate(bool birthing,uint16_t stId, SimulationState& simState,uint16_t entId) : m_houseId(stId) {
 
 	auto housePtr = dynamic_cast<House*>(simState.m_structures[stId].get());
+	
 
 	m_actions.push_back(std::make_unique<MoveToAction>((uint16_t)housePtr->m_pos.x, (uint16_t)housePtr->m_pos.y));
 	m_actions.push_back(std::make_unique<WaitForMateAction>(stId,birthing,simState,entId));
@@ -294,6 +295,9 @@ void GoToHouseAndMate::tick(EntityState& entState) {
 				m_actions[0]->tick(entState);
 			else {
 				m_actionStep = 1;
+
+				auto housePtr = dynamic_cast<House*>(entState.m_wState.m_structures[m_houseId].get());
+				housePtr->checkIn(entState.m_id);
 			}
 		}
 
@@ -307,6 +311,7 @@ void GoToHouseAndMate::tick(EntityState& entState) {
 				if (mateActionPtr->m_wasSuccessfull && mateActionPtr->m_birthingAction) {
 					auto housePtr = dynamic_cast<House*>(entState.m_wState.m_structures[m_houseId].get());
 					entState.m_wState.spawnBabyEntity(housePtr->m_pos);
+
 				}
 
 			}

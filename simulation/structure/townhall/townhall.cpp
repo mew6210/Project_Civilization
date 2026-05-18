@@ -2,12 +2,14 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
 #include "../../../utility/logger/logger.hpp"
+#include "../house/house.hpp"
 
 //file-specific globals
 namespace {
 	constexpr uint8_t k_GatherThresholdAmount = 8;
 	constexpr uint8_t k_GatherTaskPriority = 10;
 	constexpr sf::Color k_TownHallColor = sf::Color(229, 232, 23);
+	constexpr int k_GoEatTaskSatiationLimit = 30;
 }
 
 /*
@@ -145,7 +147,7 @@ void TownHall::delegateGatherBushTask() {
 			m_simState),
 		k_GatherTaskPriority
 	};
-	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk),false);
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk));
 	
 	auto bushPtr = reinterpret_cast<Bush*>(m_simState.m_structures[bushId.value()].get());
 	defaultLogger.infoLog("gather fruit, entID: ", entityId.value(), "strID: ", bushId.value());
@@ -173,7 +175,7 @@ void TownHall::delegateGatherWoodTreeTask() {
 			m_simState),
 		k_GatherTaskPriority
 	};
-	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk),false);
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk));
 
 	auto treePtr = reinterpret_cast<Tree*>(m_simState.m_structures[treeId.value()].get());
 	defaultLogger.infoLog("gather wood, entID: ", entityId.value(), "strID: ", treeId.value());
@@ -252,7 +254,7 @@ void TownHall::delegateBuildBuildingsTask() {
 			),
 		10
 	};
-	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk), false);
+	m_simState.m_entities[entityIndex]->delegateTask(std::move(tsk));
 
 	auto buildingptr = reinterpret_cast<Buildable*>(m_simState.m_structures[building.value().first].get());
 	defaultLogger.infoLog("haul to building, entID: ", entityId.value(), "strID: ", building.value().first);
@@ -262,7 +264,9 @@ uint16_t TownHall::findNotBusyHouse() {
 
 	for (uint16_t i = 0; i < m_simState.m_structures.size();i++) {
 		if (m_simState.m_structures[i]->getType() == StructureType::House) {
-			return i;
+			auto housePtr = dynamic_cast<House*>(m_simState.m_structures[i].get());
+			if(!housePtr->isClaimed())
+				return i;
 		}
 	}
 	return 0;
@@ -324,10 +328,29 @@ void TownHall::delegateMatingTask() {
 		20
 	};
 
-	m_simState.m_entities[entity1Index]->delegateTask(std::move(tsk1), true);
-	m_simState.m_entities[entity2Index]->delegateTask(std::move(tsk2), true);
-
+	m_simState.m_entities[entity1Index]->delegateTask(std::move(tsk1));
+	m_simState.m_entities[entity2Index]->delegateTask(std::move(tsk2));
+	auto housePtr = dynamic_cast<House*>(m_simState.m_structures[houseId].get());
+	housePtr->claim();
 	defaultLogger.infoLog("mating, 1entID: ", entIds.value().first, " 2entID: ", entIds.value().second," houseId: ", houseId);
+}
+
+void TownHall::delegateEatingTasks() {
+
+	for (auto& ent : m_simState.m_entities) {
+
+		if (ent->m_entState.m_satiation < k_GoEatTaskSatiationLimit && ent->m_tasks.size() == 1) {
+			if (ent->m_tasks[0].priority == 0) {
+				PrioritizedTask tsk = {
+					std::make_unique<GetFoodAndEatTask>(m_simState),
+					10
+				};
+				ent->delegateTask(std::move(tsk));
+			}
+		}
+
+	}
+
 }
 
 /*
@@ -340,8 +363,7 @@ void TownHall::tick(){
 		delegateGatherWoodTreeTask();
 		delegateBuildBuildingsTask();
 		handleBuildings();
-
-		
+		delegateEatingTasks();
 		delegateMatingTask();
 		
 	}

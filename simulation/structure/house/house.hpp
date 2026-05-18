@@ -9,6 +9,9 @@ class House : public Structure {
 	void tick() override;
 
 public:
+	void claim() { m_isClaimed = true; }
+	void unclaim() { m_isClaimed = false; }
+	bool isClaimed() const { return m_isClaimed; }
 	House(sf::Vector2f);
 	uint16_t getVisitorsAmount() const { return (uint16_t)m_visitorsIds.size(); }
 	void checkIn(uint16_t id);
