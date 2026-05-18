@@ -54,11 +54,6 @@ bool Entity::isFull(){
 		m_tickCounter % k_HealthTickIncreaseFromSatiationCount == 0);
 }
 
-void Entity::handleIsAcceptingTasks() {
-	if (m_entState.m_satiation < k_GoEatTaskSatiationLimit) m_isAcceptingTasks = false;
-	if (m_entState.m_satiation > k_GoEatTaskSatiationLimit) m_isAcceptingTasks = true;
-}
-
 //AI GENERATED
 void Entity::evalDeath() {
 
@@ -91,50 +86,10 @@ void Entity::updateStats() {
 	if (isHungry()) m_entState.m_satiation--;
 	if (isStarving()) m_entState.m_health--;
 	if (isFull()) m_entState.m_health++;	
-	handleIsAcceptingTasks();
 	if (m_entState.m_health == 0) m_entState.m_isDead = true;
 
 	m_tickCounter++;
 	if (m_entState.m_matingCd != 0) m_entState.m_matingCd--;
-}
-
-void Entity::addHungryTask() {
-	auto tsk = PrioritizedTask{
-			std::make_unique<GetFoodAndEatTask>(m_entState.m_wState),
-			k_GoEatTaskPriority
-	};
-	delegateTask(std::move(tsk),true);
-}
-
-void Entity::addTasksWhenNone() {
-	if (m_entState.m_satiation < k_GoEatTaskSatiationLimit &&
-		m_tickCounter % k_GoEatTaskCooldownTicks == 0
-		)
-	{
-		addHungryTask();
-
-	}
-}
-
-void Entity::addTasksWhenSome() {
-
-	if (m_entState.m_satiation < k_GoEatTaskSatiationLimit &&
-		m_tasks[0].priority != k_GoEatTaskPriority
-		&& m_tickCounter % k_GoEatTaskCooldownTicks == 0
-		) {
-		addHungryTask();
-	}
-}
-
-//adds tasks needed by the entity
-void Entity::addTasks() {
-	if (m_tasks.size() == 0) {
-		addTasksWhenNone();
-	}
-	else {
-		addTasksWhenSome();
-	}
-
 }
 
 void Entity::sim() {
@@ -143,12 +98,9 @@ void Entity::sim() {
 	
 	doCurrentTask();
 	updateStats();
-	addTasks();
 }
 
-void Entity::delegateTask(PrioritizedTask tsk, bool force) const {
-
-	if (!m_isAcceptingTasks && !force) return;
+void Entity::delegateTask(PrioritizedTask tsk) const {
 
 	if (m_tasks.size() == 1) {
 		if (m_tasks[0].priority == 0) {
