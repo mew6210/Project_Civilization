@@ -49,17 +49,19 @@ void Simulation::simulateEntities() {
 
 void Simulation::promoteBuilding(size_t stIndex) {
 	auto buildingPtr = dynamic_cast<Buildable*>(m_wState.m_structures[stIndex].get());
+	if (!buildingPtr) return;
 	auto buildingPos = buildingPtr->m_pos;
-	if (buildingPtr->getBuildingType() == BuildableType::House) {
+	auto buildingtype = buildingPtr->getBuildingType();
+	if (buildingtype == BuildableType::House) {
 		m_wState.m_structures[stIndex] = std::make_unique<House>(buildingPos);
 		auto townhallPtr = dynamic_cast<TownHall*>(m_wState.m_structures[0].get());
 		townhallPtr->m_BuildingsScheduled--;
 		defaultLogger.infoLog("Built a house");
 	}
-	if (buildingPtr->getBuildingType() == BuildableType::Farm) {
+	if (buildingtype == BuildableType::Farm) {
 		defaultLogger.errorLog(false, "NOT YET IMPLEMENTED");
 	}
-	if (buildingPtr->getBuildingType() == BuildableType::Quarry) {
+	if (buildingtype == BuildableType::Quarry) {
 		defaultLogger.errorLog(false, "NOT YET IMPLEMENTED");
 	}
 

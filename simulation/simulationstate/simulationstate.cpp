@@ -104,7 +104,7 @@ void SimulationState::addBuilding(sf::Vector2f pos, BuildableType type) {
 
 void SimulationState::spawnBabyEntity(sf::Vector2f pos) {
 	defaultLogger.infoLog("baby born");
-	m_entities.push_back(std::make_unique<Entity>(*this, (uint16_t)pos.x, (uint16_t)pos.y,500));
+	m_entities.push_back(std::make_unique<Entity>(*this, (uint16_t)pos.x, (uint16_t)pos.y,300));
 }
 TileType SimulationState::getTile(const uint16_t& row, const uint16_t& col) const {
 	return m_tileGrid[col][row];

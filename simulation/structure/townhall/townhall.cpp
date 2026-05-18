@@ -403,7 +403,7 @@ void TownHall::queueBuildings() {
 sf::Vector2f TownHall::getSuitableHousePosition()
 {
 	constexpr float HOUSE_RADIUS = 8.f;      // approximate house size
-	constexpr float REQUIRED_GAP = 5.f;
+	constexpr float REQUIRED_GAP = 3.f;
 	constexpr float MIN_DISTANCE = HOUSE_RADIUS * 2.f + REQUIRED_GAP;
 
 	constexpr float SEARCH_STEP = 10.f;

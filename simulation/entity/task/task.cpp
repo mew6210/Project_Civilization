@@ -305,13 +305,13 @@ void GoToHouseAndMate::tick(EntityState& entState) {
 			if (!m_actions[1]->m_isDone)
 				m_actions[1]->tick(entState);
 			else {
+				auto housePtr = dynamic_cast<House*>(entState.m_wState.m_structures[m_houseId].get());
+				housePtr->unclaim();
 				m_isDone = true;
 				auto mateActionPtr = dynamic_cast<WaitForMateAction*>(m_actions[1].get());
 				entState.setMatingCooldown();
 				if (mateActionPtr->m_wasSuccessfull && mateActionPtr->m_birthingAction) {
-					auto housePtr = dynamic_cast<House*>(entState.m_wState.m_structures[m_houseId].get());
 					entState.m_wState.spawnBabyEntity(housePtr->m_pos);
-
 				}
 
 			}

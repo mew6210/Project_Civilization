@@ -13,7 +13,7 @@ namespace {
 	constexpr int k_GoEatTaskSatiationLimit = 30;
 	constexpr int k_AgingTickCount = 200;
 	constexpr int k_EvaluateDeathTickCount = 100;
-	constexpr int k_MatingCd = 500;
+	constexpr int k_MatingCd = 300;
 }
 
 /*
