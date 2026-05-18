@@ -2,6 +2,7 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <iostream>
 #include "../../../utility/logger/logger.hpp"
+#include "../house/house.hpp"
 
 //file-specific globals
 namespace {
@@ -263,7 +264,9 @@ uint16_t TownHall::findNotBusyHouse() {
 
 	for (uint16_t i = 0; i < m_simState.m_structures.size();i++) {
 		if (m_simState.m_structures[i]->getType() == StructureType::House) {
-			return i;
+			auto housePtr = dynamic_cast<House*>(m_simState.m_structures[i].get());
+			if(!housePtr->isClaimed())
+				return i;
 		}
 	}
 	return 0;
@@ -327,7 +330,8 @@ void TownHall::delegateMatingTask() {
 
 	m_simState.m_entities[entity1Index]->delegateTask(std::move(tsk1));
 	m_simState.m_entities[entity2Index]->delegateTask(std::move(tsk2));
-
+	auto housePtr = dynamic_cast<House*>(m_simState.m_structures[houseId].get());
+	housePtr->claim();
 	defaultLogger.infoLog("mating, 1entID: ", entIds.value().first, " 2entID: ", entIds.value().second," houseId: ", houseId);
 }
 
