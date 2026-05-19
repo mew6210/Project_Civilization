@@ -1,5 +1,6 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <format>
+#include <iostream>
 #include "../map/map.hpp"
 #include "../map/mapView/mapview.hpp"
 #include "../simulation/simulation.hpp"
@@ -21,6 +22,7 @@ class Game {
 	void advanceSimulation(sf::Clock&, float&, const float&);
 	void handleInput(sf::RenderWindow&);
 	void checkTooltipInput();
+	void printUserManual();
 public:
 	Game(const std::string&);
 	void mainLoop();
