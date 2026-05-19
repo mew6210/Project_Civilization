@@ -125,15 +125,17 @@ void Simulation::renderStructures(sf::RenderWindow& window) {
 	}
 }
 
-void Simulation::renderEntityAmount(sf::RenderWindow& window) {
+void Simulation::renderUi(sf::RenderWindow& window) {
 
-	std::string entityAmount= "Citizens: " + std::to_string(m_wState.getEntities().size());
-	text.setString(entityAmount);
+	std::string entityAmount= "Citizens: " + std::to_string(m_wState.getEntities().size())+"\n";
+	std::string houseAmount = "Houses: " + std::to_string(m_wState.getHousesCount());
+	std::string sum = entityAmount + houseAmount;
+	text.setString(sum);
 	window.draw(text);
 }
 
 void Simulation::render(sf::RenderWindow& window) {
 	renderEntities(window);
 	renderStructures(window);
-	renderEntityAmount(window);
+	renderUi(window);
 }

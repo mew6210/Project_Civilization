@@ -2,7 +2,7 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 
 namespace {
-	constexpr sf::Color k_TreeColor = sf::Color(115, 81, 37);
+	constexpr sf::Color k_TreeColor = sf::Color(85, 55, 30);
 }
 
 /*

@@ -14,6 +14,7 @@ namespace {
 	constexpr int k_AgingTickCount = 200;
 	constexpr int k_EvaluateDeathTickCount = 100;
 	constexpr int k_MatingCd = 300;
+	constexpr sf::Color k_entityColor = sf::Color(210, 70, 60);
 }
 
 /*
@@ -24,7 +25,7 @@ namespace {
 void Entity::render(sf::RenderWindow& window) const {
 	sf::RectangleShape shape{ sf::Vector2f{4,4} }; //shape created every frame, TODO: make it static or something like that
 	shape.setPosition(sf::Vector2f{ float(m_entState.m_posX),float(m_entState.m_posY) });
-	shape.setFillColor(sf::Color::Red);
+	shape.setFillColor(k_entityColor);
 
 	window.draw(shape);
 }
