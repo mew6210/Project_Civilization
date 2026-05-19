@@ -22,12 +22,23 @@ class SimulationState {
  	mutable std::mt19937 rng;
 
 	void initTileGrid(const MapData&);
-
-public:
-
 	std::vector<std::unique_ptr<Structure>> m_structures = {};
 	std::vector<std::unique_ptr<Entity>> m_entities = {};
 
+public:
+	//structure-related
+	Structure* getStructure(uint16_t t) const { return m_structures[t].get(); }
+	std::unique_ptr<Structure>& getStructureReference(uint16_t t) {return m_structures[t];}
+	void addStructure(std::unique_ptr<Structure> s) { m_structures.push_back(std::move(s)); }
+	std::vector<std::unique_ptr<Structure>>& getStructures() { return m_structures; }
+
+	//entity-related
+	Entity* getEntity(uint16_t t) { return m_entities[t].get(); }
+	void addEntity(std::unique_ptr<Entity> ent) { m_entities.push_back(std::move(ent)); }
+	void reserveEntities(uint16_t count) { m_entities.reserve(count); }
+	std::vector<std::unique_ptr<Entity>>& getEntities() { return m_entities; }
+
+	//other
 	TileType getTile(const uint16_t& row, const uint16_t& col) const;
 	MapSize getMapSize() const { return mapSize; }
 	int getRandInt(int min, int max) const;

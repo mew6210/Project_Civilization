@@ -35,7 +35,7 @@ void WaitAction::tick(EntityState&) {
 }
 
 void DumpToTownHallStorageAction::tick(EntityState& ent) {
-	auto townHallPos = ent.m_wState.m_structures[0]->m_pos;
+	auto townHallPos = ent.m_wState.getStructure(0)->m_pos;
 	uint16_t townHallPosX = townHallPos.x;
 	uint16_t townHallPosY = townHallPos.y;
 
@@ -50,7 +50,7 @@ void DumpToTownHallStorageAction::tick(EntityState& ent) {
 		return;
 	}
 
-	auto townHallPtr = reinterpret_cast<TownHall*>(ent.m_wState.m_structures[0].get());
+	auto townHallPtr = reinterpret_cast<TownHall*>(ent.m_wState.getStructure(0));
 
 	townHallPtr->inv.insertItems(Item{ent.m_haul.type,ent.m_haul.count},false);
 	ent.m_haul = {};
@@ -78,7 +78,7 @@ constexpr std::string_view ItemCategoryToString(ItemCategory category) {
 
 void GetItemFromTownHallStorageAction::tick(EntityState& ent) {
 
-	auto townhallPtr= dynamic_cast<TownHall*>(ent.m_wState.m_structures[0].get());
+	auto townhallPtr= dynamic_cast<TownHall*>(ent.m_wState.getStructure(0));
 
 	if (m_itemCategory != ItemCategory::Specific) {
 		
@@ -136,7 +136,7 @@ DumpToBuildingStorageAction::DumpToBuildingStorageAction(uint16_t id): m_structu
 
 void DumpToBuildingStorageAction::tick(EntityState& ent) {
 
-	auto structureptr = ent.m_wState.m_structures[m_structureIndex].get();
+	auto structureptr = ent.m_wState.getStructure(m_structureIndex);
 	if (structureptr->getType() != StructureType::Building) {
 		defaultLogger.warningLog("tried to insert materials to not a building");
 		isDone(true);
@@ -150,7 +150,7 @@ void DumpToBuildingStorageAction::tick(EntityState& ent) {
 
 void WaitForMateAction::tick(EntityState& ent) {
 
-	static auto housePtr = dynamic_cast<House*>(ent.m_wState.m_structures[m_houseIndex].get());
+	static auto housePtr = dynamic_cast<House*>(ent.m_wState.getStructure(m_houseIndex));
 	
 	if (!housePtr->isClaimed()) {
 		housePtr->checkOut(ent.m_id);

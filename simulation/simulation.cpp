@@ -7,11 +7,11 @@
 
 
 Simulation::Simulation(const MapData& md) : m_wState(md), text(font) {
-	m_wState.m_entities.reserve(1000);
+	m_wState.reserveEntities(1000);
 	uint16_t widthHalf = m_wState.getMapSize().m_width / 2;
 	uint16_t heightHalf = m_wState.getMapSize().m_height / 2;
-	m_wState.m_entities.push_back(std::make_unique<Entity>( m_wState, widthHalf,heightHalf));
-	m_wState.m_entities.push_back(std::make_unique<Entity>( m_wState, widthHalf,heightHalf));
+	m_wState.addEntity(std::make_unique<Entity>( m_wState, widthHalf,heightHalf));
+	m_wState.addEntity(std::make_unique<Entity>( m_wState, widthHalf,heightHalf));
 	TileType tile = m_wState.getTile(widthHalf, heightHalf);
 	m_wState.addStructure({ float(widthHalf),float(heightHalf)}, StructureType::TownHall,tile);
 
@@ -26,8 +26,8 @@ Simulation::Simulation(const MapData& md) : m_wState(md), text(font) {
 
 void Simulation::simulateEntities() {
 
-	for (auto it = m_wState.m_entities.begin();
-		it != m_wState.m_entities.end(); ) {
+	for (auto it = m_wState.getEntities().begin();
+		it != m_wState.getEntities().end(); ) {
 
 		if ((*it)->m_entState.m_isDead) {
 			if((*it)->m_entState.m_naturalCauses)
@@ -36,7 +36,7 @@ void Simulation::simulateEntities() {
 				defaultLogger.warningLog("entity died, id: ", (*it)->m_entState.m_id);
 
 
-			it = m_wState.m_entities.erase(it);
+			it = m_wState.getEntities().erase(it);
 		}
 			
 		else {
@@ -48,13 +48,13 @@ void Simulation::simulateEntities() {
 }
 
 void Simulation::promoteBuilding(size_t stIndex) {
-	auto buildingPtr = dynamic_cast<Buildable*>(m_wState.m_structures[stIndex].get());
+	auto buildingPtr = dynamic_cast<Buildable*>(m_wState.getStructure(stIndex));
 	if (!buildingPtr) return;
 	auto buildingPos = buildingPtr->m_pos;
 	auto buildingtype = buildingPtr->getBuildingType();
 	if (buildingtype == BuildableType::House) {
-		m_wState.m_structures[stIndex] = std::make_unique<House>(buildingPos);
-		auto townhallPtr = dynamic_cast<TownHall*>(m_wState.m_structures[0].get());
+		m_wState.getStructureReference(stIndex) = std::make_unique<House>(buildingPos);
+		auto townhallPtr = dynamic_cast<TownHall*>(m_wState.getStructure(0));
 		townhallPtr->m_BuildingsScheduled--;
 		defaultLogger.infoLog("Built a house");
 	}
@@ -69,9 +69,9 @@ void Simulation::promoteBuilding(size_t stIndex) {
 
 void Simulation::promoteBuildings() {
 	std::vector<size_t> buildingsToPromoteIndexes = {};
-	for (size_t i = 0; i < m_wState.m_structures.size();i++) {
-		if (m_wState.m_structures[i]->getType() == StructureType::Building) {
-			auto buildingPtr = dynamic_cast<Buildable*>(m_wState.m_structures[i].get());
+	for (size_t i = 0; i < m_wState.getStructures().size(); i++) {
+		if (m_wState.getStructure(i)->getType() == StructureType::Building) {
+			auto buildingPtr = dynamic_cast<Buildable*>(m_wState.getStructure(i));
 			if (buildingPtr->checkisBuilt()) buildingsToPromoteIndexes.push_back(i);
 		}
 	}
@@ -84,14 +84,14 @@ void Simulation::promoteBuildings() {
 
 void Simulation::simulateStructures(){
 
-	auto townHallPtr = dynamic_cast<TownHall*>(m_wState.m_structures[0].get());
+	auto townHallPtr = dynamic_cast<TownHall*>(m_wState.getStructure(0));
 
 	for (auto& entry : townHallPtr->m_buildingQueue) {
-		m_wState.m_structures.push_back(std::move(entry));
+		m_wState.addStructure(std::move(entry));
 	}
 	townHallPtr->m_buildingQueue.clear();
 
-	for (auto& structure : m_wState.m_structures) {
+	for (auto& structure : m_wState.getStructures()) {
 		structure->tick();
 	}
 
@@ -104,7 +104,7 @@ void Simulation::simulate() {
 }
 
 void Simulation::renderEntities(sf::RenderWindow& window) {
-	for (const auto& ent : m_wState.m_entities) {
+	for (const auto& ent : m_wState.getEntities()) {
 		ent->render(window);
 	}
 }
@@ -116,18 +116,18 @@ void Simulation::spawnAt(sf::Vector2f pos, ActiveTool type) {
 		m_wState.addStructure(pos, StructureType::Bush, tile);
 	}   
 	if (type == ActiveTool::Tree)   m_wState.addStructure(pos, StructureType::Tree,tile);
-	if (type == ActiveTool::Entity) m_wState.m_entities.push_back(std::make_unique<Entity>( m_wState, (uint16_t)pos.x, (uint16_t)pos.y ));
+	if (type == ActiveTool::Entity) m_wState.addEntity(std::make_unique<Entity>( m_wState, (uint16_t)pos.x, (uint16_t)pos.y ));
 }
 
 void Simulation::renderStructures(sf::RenderWindow& window) {
-	for (const auto& structure : m_wState.m_structures) {
+	for (const auto& structure : m_wState.getStructures()) {
 		structure->render(window);
 	}
 }
 
 void Simulation::renderEntityAmount(sf::RenderWindow& window) {
 
-	std::string entityAmount= "Citizens: " + std::to_string(m_wState.m_entities.size());
+	std::string entityAmount= "Citizens: " + std::to_string(m_wState.getEntities().size());
 	text.setString(entityAmount);
 	window.draw(text);
 }
