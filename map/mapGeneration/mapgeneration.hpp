@@ -1,8 +1,8 @@
 #pragma once
 #include <SFML/Graphics/Texture.hpp>
 
-sf::Vector2f randomGradient(int ix, int iy, unsigned int seed);
-float dotProduct(int ix, int iy, float x, float y, unsigned int seed);
-float interpolation(float a0, float a1, float w);
-float perlin(float x, float y, unsigned int seed);
-void generateMap(std::string name,unsigned int seed);
+sf::Vector2f randomGradient(int, int, unsigned int);
+float dotProduct(int, int, float, float, unsigned int);
+float interpolation(float, float, float);
+float perlin(float, float, unsigned int);
+void generateMap(std::string, unsigned int, int, int);
