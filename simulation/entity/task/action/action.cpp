@@ -125,6 +125,7 @@ void ConsumeHaulAction::tick(EntityState& ent) {
 
 GetItemFromTownHallStorageAction::GetItemFromTownHallStorageAction(ItemCategory itemCategory, uint64_t count): 
 	m_itemCategory(itemCategory),
+	m_specificType(ItemType::Null),
 	m_count(count) {}
 GetItemFromTownHallStorageAction::GetItemFromTownHallStorageAction(ItemType itemType, uint64_t count): 
 	m_itemCategory(ItemCategory::Specific),

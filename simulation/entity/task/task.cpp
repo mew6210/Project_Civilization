@@ -51,7 +51,8 @@ ItemType BushTypeToItemType(BushType type) {
 	case BushType::Strawberry: return ItemType::Strawberry;
 	case BushType::Blueberry: return ItemType::Blueberry;
 	case BushType::Raspberry: return ItemType::Raspberry;
-	case BushType::Null: return ItemType::Blueberry;
+	case BushType::Null: return ItemType::Null;
+	default: return ItemType::Null;
 	}
 
 }

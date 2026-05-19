@@ -63,6 +63,7 @@ std::string itemTypeToString(ItemType t) {
 		case ItemType::Spruce: return "Spruce";
 		case ItemType::Birch: return "Birch";
 		case ItemType::Null: return "Null";
+		default: return "should NEVER happen";
 	}
 }
 

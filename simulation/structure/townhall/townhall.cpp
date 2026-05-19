@@ -36,7 +36,8 @@ uint16_t TownHall::getEntityVectorIndexByEntityId(uint16_t id) {
 	for (uint16_t i = 0; i < m_simState.getEntities().size(); i++) {
 		if (id == m_simState.getEntity(i)->m_entState.m_id) return i;
 	}
-
+	defaultLogger.errorLog(true, "asked for nonexistent entity id in entity vector");
+	return 0; //should never happen
 }
 
 /*
@@ -220,7 +221,7 @@ std::optional<std::pair<uint16_t, ItemCategory>> TownHall::findBuildingToBuild()
 	for (const auto& [id, neededItems] : buildings) {
 
 		for (const auto& catNeeded : neededItems) {
-			if (std::count(available.begin(), available.end(), catNeeded) != 0) return std::make_pair(id, catNeeded);
+			if (std::count(available.begin(), available.end(), catNeeded) != 0) return std::make_pair((uint16_t)id, catNeeded);
 			else continue;
 		}
 	}
