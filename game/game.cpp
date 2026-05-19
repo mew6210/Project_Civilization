@@ -8,7 +8,10 @@ void Game::mainLoop() {
     float acc = 0.0f;
     const float dt = 1.0f / sim.getTickRate();
 
-    sf::RenderWindow window(sf::VideoMode({ 1920, 1080 }), "My window");
+    const uint16_t windowWidth = map.getMapData().getWidth();
+    const uint16_t windowHeight = map.getMapData().getHeight();
+
+    sf::RenderWindow window(sf::VideoMode({ windowWidth, windowHeight }), "Civilisation");
     window.setFramerateLimit(60);
 
     while (window.isOpen()) {
