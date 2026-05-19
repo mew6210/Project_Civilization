@@ -110,3 +110,13 @@ void SimulationState::spawnBabyEntity(sf::Vector2f pos) {
 TileType SimulationState::getTile(const uint16_t& row, const uint16_t& col) const {
 	return m_tileGrid[col][row];
 }
+
+uint16_t SimulationState::getHousesCount() {
+	uint16_t count = 0;
+	for (auto& strctr : getStructures()) {
+		if (strctr->getType() == StructureType::House) {
+			count++;
+		}
+	}
+	return count;
+}

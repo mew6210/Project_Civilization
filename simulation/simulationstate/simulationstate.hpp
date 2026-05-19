@@ -46,4 +46,5 @@ public:
 	SimulationState(const MapData&);
 	void addBuilding(sf::Vector2f, BuildableType);
 	void spawnBabyEntity(sf::Vector2f);
+	uint16_t getHousesCount();
 };
