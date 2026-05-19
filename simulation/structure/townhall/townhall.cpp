@@ -19,7 +19,7 @@ namespace {
 */
 void TownHall::render(sf::RenderWindow& win){
 	sf::RectangleShape shape{ sf::Vector2f{6,6} }; //shape created every frame, TODO: make it static or something like that
-	shape.setPosition(m_pos);
+	shape.setPosition(getPos());
 	shape.setFillColor(k_TownHallColor);
 
 	win.draw(shape);
@@ -417,7 +417,7 @@ sf::Vector2f TownHall::getSuitableHousePosition()
 
 	for (auto& structure : m_simState.getStructures())
 	{
-		positions.push_back(structure->m_pos);
+		positions.push_back(structure->getPos());
 	}
 
 	auto isValidPosition = [&](const sf::Vector2f& pos)
@@ -456,8 +456,8 @@ sf::Vector2f TownHall::getSuitableHousePosition()
 			float rad = angle * 3.14159265f / 180.f;
 
 			sf::Vector2f candidate(
-				m_pos.x + std::cos(rad) * radius,
-				m_pos.y + std::sin(rad) * radius
+				getPos().x + std::cos(rad) * radius,
+				getPos().y + std::sin(rad) * radius
 			);
 
 			if (isValidPosition(candidate))
@@ -468,7 +468,7 @@ sf::Vector2f TownHall::getSuitableHousePosition()
 	}
 
 	// fallback
-	return m_pos;
+	return getPos();
 }
 
 TownHall::TownHall(sf::Vector2f pos, SimulationState& simState): Structure(pos),m_simState(simState) {

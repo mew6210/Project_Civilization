@@ -17,7 +17,7 @@ namespace {
 void Bush::render(sf::RenderWindow& win) {
 	
 	sf::RectangleShape shape{ sf::Vector2f{4,4} }; //shape created every frame, TODO: make it static or something like that
-	shape.setPosition(m_pos);
+	shape.setPosition(getPos());
 	shape.setFillColor(k_BushColor);
 
 	win.draw(shape);

@@ -50,7 +50,7 @@ void Simulation::simulateEntities() {
 void Simulation::promoteBuilding(size_t stIndex) {
 	auto buildingPtr = dynamic_cast<Buildable*>(m_wState.getStructure(stIndex));
 	if (!buildingPtr) return;
-	auto buildingPos = buildingPtr->m_pos;
+	auto buildingPos = buildingPtr->getPos();
 	auto buildingtype = buildingPtr->getBuildingType();
 	if (buildingtype == BuildableType::House) {
 		m_wState.getStructureReference(stIndex) = std::make_unique<House>(buildingPos);

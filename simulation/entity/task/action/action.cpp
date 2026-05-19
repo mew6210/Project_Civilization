@@ -35,7 +35,7 @@ void WaitAction::tick(EntityState&) {
 }
 
 void DumpToTownHallStorageAction::tick(EntityState& ent) {
-	auto townHallPos = ent.m_wState.getStructure(0)->m_pos;
+	auto townHallPos = ent.m_wState.getStructure(0)->getPos();
 	uint16_t townHallPosX = townHallPos.x;
 	uint16_t townHallPosY = townHallPos.y;
 
