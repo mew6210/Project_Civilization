@@ -96,10 +96,10 @@ void Map::initTexture() {
 		sf::Color color;
 
 		switch (data[i]) {
-			case TileType::TreeSoil: color = sf::Color(22, 102, 46); break;
-			case TileType::FertileSoil: color = sf::Color(30, 235, 92); break;
-			case TileType::SemiFertileSoil: color = sf::Color(163, 224, 92); break;
-			case TileType::NotFertileSoil: color = sf::Color(135, 126, 82); break;
+		case TileType::TreeSoil:        color = sf::Color(20, 70, 35); break;   
+		case TileType::FertileSoil:     color = sf::Color(62, 92, 40); break;     
+		case TileType::SemiFertileSoil: color = sf::Color(110, 110, 70); break;   
+		case TileType::NotFertileSoil:  color = sf::Color(140, 120, 90); break;   
 		}
 
 		pixels[i * 4 + 0] = color.r;

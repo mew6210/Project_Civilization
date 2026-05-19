@@ -6,7 +6,7 @@
 
 namespace {
 
-	constexpr sf::Color k_BushColor = sf::Color::Magenta;
+	constexpr sf::Color k_BushColor = sf::Color(180, 80, 150);
 }
 
 /*
