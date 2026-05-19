@@ -38,7 +38,7 @@ std::vector<ItemCategory> Buildable::getNeededItems() {
 
 void Buildable::insertMaterials(EntityState& ent) {
 
-	m_storage.insertItems(ent.m_haul,true);
+	m_storage+=(ent.m_haul);
 	ent.m_haul = {};
 
 }

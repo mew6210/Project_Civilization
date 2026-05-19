@@ -376,9 +376,9 @@ void TownHall::tick(){
 }
 
 void TownHall::addStartingItems() {
-	inv.insertItems(Item{ ItemType::Blueberry,30 },true);
-	inv.insertItems(Item{ ItemType::Strawberry,30 },true);
-	inv.insertItems(Item{ ItemType::Raspberry,30 },true);
+	inv+=(Item{ ItemType::Blueberry,30 });
+	inv+=(Item{ ItemType::Strawberry,30 });
+	inv+=(Item{ ItemType::Raspberry,30 });
 }
 
 void TownHall::handleBuildings() {
