@@ -2,7 +2,7 @@
 #include "map/mapGeneration/mapgeneration.hpp"
 
 int main() {
-    generateMap("map_test.txt", 2137, 1920, 1080);
+    generateMap("map_test.txt", 800, 600);
     Game game("map_test.txt");
     game.mainLoop();
 }

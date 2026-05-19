@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <filesystem>
-
+#include "..\..\utility\logger\logger.hpp"
 
 sf::Vector2f randomGradient(int ix, int iy, unsigned int seed) {
     //Hashing
@@ -72,10 +72,38 @@ float perlin(float x, float y, unsigned int seed) {
     return value;
 }
 
-void generateMap(std::string name,unsigned int seed, int windowWidth, int windowHeight) {
+void generateMap(std::string name, int windowWidth, int windowHeight) {
 
-    if (std::filesystem::exists(name)) { //if file exists, dont generate
-        return;
+    if (std::filesystem::exists(name)) {
+        std::string decide;
+        std::cout << "Map found, Load the found Map?\nL - load the map\nG - generate a new map\n";
+        do {
+            std::cin >> decide;
+            if (decide == "L" || decide == "l") {
+                return;
+            }
+            else if (decide == "G" || decide == "g") {
+                break;
+            }
+            else {
+                std::cout << "Command not recognized\nL - load the new map\nG - generate a new map\n";
+            }
+        } while (true);
+    }
+    else {
+        std::cout << "No map found";
+    }
+
+    unsigned int seed = 0;
+    std::string seedInText;
+    std::cout << "Input Map Seed:\n";
+    std::getline(std::cin >> std::ws, seedInText);
+    for (char c : seedInText) {
+        if (seed >= 2147482648) {
+            break;
+        }
+        seed *= 2;
+        seed += abs(static_cast<int>(c));
     }
 
     std::ofstream mapFile(name);
@@ -83,6 +111,7 @@ void generateMap(std::string name,unsigned int seed, int windowWidth, int window
     mapFile << "width: "<<windowWidth<<"\nheight: "<<windowHeight<<"\n";
     mapFile << "data:";
 
+    defaultLogger.infoLog("Generating map...");
 
     int GRID_SIZE = 40;
     
@@ -119,4 +148,5 @@ void generateMap(std::string name,unsigned int seed, int windowWidth, int window
         }
     }
     mapFile.close();
+    defaultLogger.successLog("Map Generated");
 }
