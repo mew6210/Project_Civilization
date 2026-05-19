@@ -22,7 +22,6 @@ class Map {
 	void initMap(const std::string&);
 
 public:
-	void saveMapData();
 	MapData& getMapData() { return m_data; }
 	sf::Texture& getTexture() { return m_texture; }
 

@@ -63,6 +63,7 @@ std::string itemTypeToString(ItemType t) {
 		case ItemType::Spruce: return "Spruce";
 		case ItemType::Birch: return "Birch";
 		case ItemType::Null: return "Null";
+		default: return "should NEVER happen";
 	}
 }
 
@@ -82,6 +83,22 @@ void Storage::insertItems(Item i,bool isSilent){
 
 	if(!isSilent)
 	printInsert(i);
+}
+
+//this one doesnt print about what was inserted
+void Storage::insertItems(Item i){
+	
+	auto index = doesItemTypeExist(i.type);
+	if (!index) {
+		m_items.push_back(i);
+	}
+	else {
+		m_items[index.value()].count += i.count;
+	}
+}
+
+void Storage::operator+=(Item i) {
+	insertItems(i);
 }
 
 bool Storage::requestItems(EntityState& ent, Item i) {

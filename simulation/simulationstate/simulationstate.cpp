@@ -56,6 +56,7 @@ std::string tiletypetostring(TileType t) {
 	case TileType::SemiFertileSoil: return "SemiFertileSoil";
 	case TileType::TreeSoil: return "TreeSoil";
 	case TileType::NotFertileSoil: return "NotFertileSoil";
+	default: return "should never happen";
 	}
 }
 

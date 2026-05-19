@@ -85,15 +85,6 @@ void Map::initMap(const std::string& file) {
 	initTexture();
 }
 
-void Map::saveMapData() {
-	std::ofstream file("mapData.txt"); //TODO: should check if this file name is already taken, and suggest a different one maybe
-
-	file << "width: " << m_data.getWidth() << "\n";
-	file << "height: " << m_data.getHeight() << "\n";
-	file << "data: " << m_data.getDataString() << "\n";
-
-}
-
 void Map::initTexture() {
 
 	auto data = m_data.getDataCopy();
