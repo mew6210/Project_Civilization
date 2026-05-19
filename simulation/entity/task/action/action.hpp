@@ -7,19 +7,21 @@
 
 	Examples: going somewhere, standing somewhere for x amount of ticks
 */
-struct Action {
+class Action {
 	
 	bool m_isDone = false;
 
-	virtual void tick(EntityState&) = 0;
 public:
+	virtual void tick(EntityState&) = 0;
+	bool isDone() const { return m_isDone; }
+	void isDone(bool b) { m_isDone = b; }
 	Action(){}
 };
 
-struct MoveToAction : public Action {
+class MoveToAction : public Action {
 	uint16_t m_DestinationX;
 	uint16_t m_DestinationY;
-
+public:
 	MoveToAction(uint16_t destinationX, uint16_t destinationY) :
 		m_DestinationX(destinationX),
 		m_DestinationY(destinationY) {
@@ -27,43 +29,45 @@ struct MoveToAction : public Action {
 	void tick(EntityState&) override;
 };
 
-struct WaitAction : public Action {
+class WaitAction : public Action {
 	uint64_t m_tickAmount;
 	uint64_t m_curTick = 0;
-
+public:
 	WaitAction(uint64_t tickAmount):m_tickAmount(tickAmount){}
 	void tick(EntityState&) override;
 };
 
-struct DumpToTownHallStorageAction : public Action {	//TODO: assumes that u just dump everything u have, will probably have to be changed later
+class DumpToTownHallStorageAction : public Action {	//TODO: assumes that u just dump everything u have, will probably have to be changed later
+public:
 	void tick(EntityState&) override;
 };
 
-struct DumpToBuildingStorageAction : public Action {
+class DumpToBuildingStorageAction : public Action {
 	uint16_t m_structureIndex;
+public:
 	void tick(EntityState&)override;
-
 	DumpToBuildingStorageAction(uint16_t);
 };
 
-struct GetItemFromTownHallStorageAction : public Action {
+class GetItemFromTownHallStorageAction : public Action {
 	
 	ItemCategory m_itemCategory;
 	ItemType m_specificType;
 	uint64_t m_count;
-
+	bool m_isFound = false;
+public:
 	GetItemFromTownHallStorageAction(ItemCategory, uint64_t);
 	GetItemFromTownHallStorageAction(ItemType, uint64_t);
+	bool isFound() const { return m_isFound; }
 	void tick(EntityState&) override;
+};
+
+class ConsumeHaulAction : public Action {
 public:
-	bool m_isFound = false;
-};
-
-struct ConsumeHaulAction : public Action {
 	void tick(EntityState&) override;
 };
 
-struct WaitForMateAction : public Action {
+class WaitForMateAction : public Action {
 	uint64_t m_tickCounter = 0;
 	uint16_t m_houseIndex = 0;
 	bool m_wasSuccessfull = false;
@@ -71,6 +75,7 @@ struct WaitForMateAction : public Action {
 
 public:
 	void tick(EntityState&) override;
-
+	bool wasSuccessfull() const {return m_wasSuccessfull;}
+	bool birthingAction() const { return m_birthingAction; }
 	WaitForMateAction(uint16_t stIndex, bool birthing, SimulationState& simState, uint16_t entityId);
 };

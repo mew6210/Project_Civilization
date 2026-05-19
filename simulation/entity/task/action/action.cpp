@@ -12,7 +12,7 @@ void MoveToAction::tick(EntityState& entState) {
 	int dy = static_cast<int>(m_DestinationY) - static_cast<int>(entState.m_posY);
 
 	if (dx == 0 && dy == 0) {
-		m_isDone = true;
+		isDone(true);
 		return;
 	}
 
@@ -31,7 +31,7 @@ void WaitAction::tick(EntityState&) {
 	if (m_curTick < m_tickAmount) {
 		m_curTick++;
 	}
-	else m_isDone = true;
+	else isDone(true);
 }
 
 void DumpToTownHallStorageAction::tick(EntityState& ent) {
@@ -40,12 +40,12 @@ void DumpToTownHallStorageAction::tick(EntityState& ent) {
 	uint16_t townHallPosY = townHallPos.y;
 
 	if (ent.m_posX != townHallPosX){
-		m_isDone = true;
+		isDone(true);
 		defaultLogger.errorLog(false, "townhall Position and dumpToSTorageAction x axis does not match");
 		return;
 	}
 	if (ent.m_posY != townHallPosY){
-		m_isDone = true;
+		isDone(true);
 		defaultLogger.errorLog(false, "townhall Position and dumpToSTorageAction y axis does not match");
 		return;
 	}
@@ -54,7 +54,7 @@ void DumpToTownHallStorageAction::tick(EntityState& ent) {
 
 	townHallPtr->inv.insertItems(Item{ent.m_haul.type,ent.m_haul.count},false);
 	ent.m_haul = {};
-	m_isDone = true;
+	isDone(true);
 }
 
 constexpr std::string_view ItemCategoryToString(ItemCategory category) {
@@ -85,11 +85,11 @@ void GetItemFromTownHallStorageAction::tick(EntityState& ent) {
 		auto res = townhallPtr->inv.requestCategory(ent, m_itemCategory, m_count);
 		if (!res) {
 			defaultLogger.warningLog("Entity couldn't find enough of: ", ItemCategoryToString(m_itemCategory), " ", m_count);
-			m_isDone = true;
+			isDone(true);
 			return;
 		}
 		else {
-			m_isDone = true;
+			isDone(true);
 			m_isFound = true;
 			return;
 		}
@@ -115,11 +115,11 @@ void ConsumeHaulAction::tick(EntityState& ent) {
 		ent.m_haul = Item{ ItemType::Null,0 };
 		
 		//defaultLogger.infoLog("entId: ",ent.m_id," eaten food, current satiation: ",ent.m_satiation," current hp: ",ent.m_health);
-		m_isDone = true;
+		isDone(true);
 	}
 	else {
 		defaultLogger.warningLog("entity tried to eat something uneatable");
-		m_isDone = true;
+		isDone(true);
 	}
 }
 
@@ -139,13 +139,13 @@ void DumpToBuildingStorageAction::tick(EntityState& ent) {
 	auto structureptr = ent.m_wState.m_structures[m_structureIndex].get();
 	if (structureptr->getType() != StructureType::Building) {
 		defaultLogger.warningLog("tried to insert materials to not a building");
-		m_isDone = true;
+		isDone(true);
 		return;
 	}
-	
+
 	auto buildingptr = dynamic_cast<Buildable*>(structureptr);
 	buildingptr->insertMaterials(ent);
-	m_isDone = true;
+	isDone(true);
 }
 
 void WaitForMateAction::tick(EntityState& ent) {
@@ -157,11 +157,11 @@ void WaitForMateAction::tick(EntityState& ent) {
 		//defaultLogger.infoLog("mating assumed successfull");
 		housePtr->unclaim();
 		m_wasSuccessfull = true;
-		m_isDone = true;
+		isDone(true);
 		return;
 	}
 	if (housePtr->getVisitorsAmount() > 1) {
-		m_isDone = true;
+		isDone(true);
 		m_wasSuccessfull = true;
 		housePtr->unclaim();
 		housePtr->checkOut(ent.m_id);
@@ -169,7 +169,7 @@ void WaitForMateAction::tick(EntityState& ent) {
 	}
 
 	if (m_tickCounter > 600) {
-		m_isDone = true;
+		isDone(true);
 		housePtr->unclaim();
 		housePtr->checkOut(ent.m_id);
 		return;

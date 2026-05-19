@@ -10,19 +10,19 @@
 */
 void WanderRandTask::tick(EntityState& entState) {
 	
-	if (m_actions.empty()) {
+	if (isActionsEmpty()) {
 		int dx = entState.m_wState.getRandInt(-50, 50);
 		int dy = entState.m_wState.getRandInt(-50, 50);
 		int destX = entState.m_posX + dx;	//TODO: COULD GO OUT OF BOUNDS
 		int destY = entState.m_posY + dy;
 
-		m_actions.push_back(std::make_unique<MoveToAction>(destX, destY));
+		addAction(std::make_unique<MoveToAction>(destX, destY));
 	}
-	if (m_actions[m_actionStep]->m_isDone) {
-		m_isDone = true;
+	if (getActions()[getActionStep()]->isDone()) {
+		isDone(true);
 		return;
 	}
-	m_actions[m_actionStep]->tick(entState);
+	getActions()[getActionStep()]->tick(entState);
 	
 }
 
@@ -30,12 +30,12 @@ GatherFruitBushTask::GatherFruitBushTask(uint16_t bsInd,SimulationState& simStat
 	auto townHallPos = simState.m_structures[0]->m_pos;
 	auto bushTemp = dynamic_cast<Bush*>(simState.m_structures[m_bushIndex].get());
 	
-	if (!bushTemp->claim()) m_isDone = false;
+	if (!bushTemp->claim()) isDone(false);
 
-	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(bushTemp->m_pos.x),uint16_t(bushTemp->m_pos.y)));
-	m_actions.push_back(std::make_unique<WaitAction>(bushTemp->getFruitAmount() * 10)); //gather one fruit in half a second
-	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y))); //go to townhall
-	m_actions.push_back(std::make_unique<DumpToTownHallStorageAction>()); //dump berries to storage
+	addAction(std::make_unique<MoveToAction>(uint16_t(bushTemp->m_pos.x),uint16_t(bushTemp->m_pos.y)));
+	addAction(std::make_unique<WaitAction>(bushTemp->getFruitAmount() * 10)); //gather one fruit in half a second
+	addAction(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y))); //go to townhall
+	addAction(std::make_unique<DumpToTownHallStorageAction>()); //dump berries to storage
 
 }
 
@@ -70,35 +70,35 @@ Item GatherFruitBushTask::getFruitsFromBush(const SimulationState& simState) con
 //there HAS to be a better way to do it, but why bother
 void GatherFruitBushTask::tick(EntityState& ent) {
 
-	if (!m_isDone) {
-		if (m_actionStep == 0) {
-			if (!m_actions[0]->m_isDone)
-				m_actions[0]->tick(ent);
-			else m_actionStep = 1;
+	if (!isDone()) {
+		if (getActionStep() == 0) {
+			if (!getAction(0)->isDone())
+				getAction(0)->tick(ent);
+			else setActionStep(1);
 		}
 
-		if (m_actionStep == 1) {
-			if (!m_actions[1]->m_isDone)
-				m_actions[1]->tick(ent);
+		if (getActionStep() == 1) {
+			if (!getAction(1)->isDone())
+				getAction(1)->tick(ent);
 			else { 
 				unclaimBush(ent.m_wState);
 				Item fruits = getFruitsFromBush(ent.m_wState);
 				ent.m_haul = fruits;
-				m_actionStep = 2;
+				setActionStep(2);
 			}
 		}
 		
-		if (m_actionStep == 2) {
-			if (!m_actions[2]->m_isDone)
-				m_actions[2]->tick(ent);
-			else m_actionStep = 3;
+		if (getActionStep() == 2) {
+			if (!getAction(2)->isDone())
+				getAction(2)->tick(ent);
+			else setActionStep(3);
 		}
 
-		if (m_actionStep == 3) {
-			if (!m_actions[3]->m_isDone)
-				m_actions[3]->tick(ent);
+		if (getActionStep() == 3) {
+			if (!getAction(3)->isDone())
+				getAction(3)->tick(ent);
 			else {
-				m_isDone = true;
+				isDone(true);
 			}
 		}
 
@@ -109,35 +109,35 @@ void GatherFruitBushTask::tick(EntityState& ent) {
 //copied 1:1 from bush tick
 void GatherWoodTreeTask::tick(EntityState& ent) {
 
-	if (!m_isDone) {
-		if (m_actionStep == 0) {
-			if (!m_actions[0]->m_isDone)
-				m_actions[0]->tick(ent);
-			else m_actionStep = 1;
+	if (!isDone()) {
+		if (getActionStep() == 0) {
+			if (!getAction(0)->isDone())
+				getAction(0)->tick(ent);
+			else setActionStep(1);
 		}
 
-		if (m_actionStep == 1) {
-			if (!m_actions[1]->m_isDone)
-				m_actions[1]->tick(ent);
+		if (getActionStep() == 1) {
+			if (!getAction(1)->isDone())
+				getAction(1)->tick(ent);
 			else {
 				unclaimTree(ent.m_wState);
 				Item wood = getWoodFromTree(ent.m_wState);
 				ent.m_haul = wood;
-				m_actionStep = 2;
+				setActionStep(2);
 			}
 		}
 
-		if (m_actionStep == 2) {
-			if (!m_actions[2]->m_isDone)
-				m_actions[2]->tick(ent);
-			else m_actionStep = 3;
+		if (getActionStep() == 2) {
+			if (!getAction(2)->isDone())
+				getAction(2)->tick(ent);
+			else setActionStep(3);
 		}
 
-		if (m_actionStep == 3) {
-			if (!m_actions[3]->m_isDone)
-				m_actions[3]->tick(ent);
+		if (getActionStep() == 3) {
+			if (!getAction(3)->isDone())
+				getAction(3)->tick(ent);
 			else {
-				m_isDone = true;
+				isDone(true);
 			}
 		}
 
@@ -183,50 +183,50 @@ GatherWoodTreeTask::GatherWoodTreeTask(uint16_t treeIndex, SimulationState& simS
 	auto townHallPos = simState.m_structures[0]->m_pos;
 	auto treeTemp = dynamic_cast<Tree*>(simState.m_structures[m_treeIndex].get());
 
-	if (!treeTemp->claim()) m_isDone = false;
+	if (!treeTemp->claim()) isDone(false);
 
-	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(treeTemp->m_pos.x), uint16_t(treeTemp->m_pos.y)));
-	m_actions.push_back(std::make_unique<WaitAction>(treeTemp->getWoodAmount() * 10)); //gather one wood in half a second
-	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x),uint16_t(townHallPos.y)));
-	m_actions.push_back(std::make_unique<DumpToTownHallStorageAction>());
+	addAction(std::make_unique<MoveToAction>(uint16_t(treeTemp->m_pos.x), uint16_t(treeTemp->m_pos.y)));
+	addAction(std::make_unique<WaitAction>(treeTemp->getWoodAmount() * 10)); //gather one wood in half a second
+	addAction(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y)));
+	addAction(std::make_unique<DumpToTownHallStorageAction>());
 }
 
 
 GetFoodAndEatTask::GetFoodAndEatTask(SimulationState& simState) {
 	auto townHallPos = simState.m_structures[0]->m_pos;
 
-	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y)));
-	m_actions.push_back(std::make_unique<GetItemFromTownHallStorageAction>(ItemCategory::Food,10));
-	m_actions.push_back(std::make_unique<ConsumeHaulAction>());
+	addAction(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y)));
+	addAction(std::make_unique<GetItemFromTownHallStorageAction>(ItemCategory::Food, 10));
+	addAction(std::make_unique<ConsumeHaulAction>());
 }
 void GetFoodAndEatTask::tick(EntityState& ent) {
 	
-	if (!m_isDone) {
-		if (m_actionStep == 0) {
-			if (!m_actions[0]->m_isDone)
-				m_actions[0]->tick(ent);
-			else m_actionStep = 1;
+	if (!isDone()) {
+		if (getActionStep() == 0) {
+			if (!getAction(0)->isDone())
+				getAction(0)->tick(ent);
+			else setActionStep(1);
 		}
 
-		if (m_actionStep == 1) {
-			if (!m_actions[1]->m_isDone)
-				m_actions[1]->tick(ent);
+		if (getActionStep() == 1) {
+			if (!getAction(1)->isDone())
+				getAction(1)->tick(ent);
 			else {
-				auto act = reinterpret_cast<GetItemFromTownHallStorageAction*>(m_actions[1].get());
-				if (act->m_isFound == false) {	//if u havent found food, dont try to consume it
-					m_isDone = true;
+				auto act = reinterpret_cast<GetItemFromTownHallStorageAction*>(getAction(1));
+				if (act->isFound() == false) {	//if u havent found food, dont try to consume it
+					isDone(true);
 				}
 				else {
-					m_actionStep = 2; //else try to consume it
+					setActionStep(2); //else try to consume it
 				}
 				
 			}
 		}
 
-		if (m_actionStep == 2) {
-			if (!m_actions[2]->m_isDone)
-				m_actions[2]->tick(ent);
-			else m_isDone = true;
+		if (getActionStep() == 2) {
+			if (!getAction(2)->isDone())
+				getAction(2)->tick(ent);
+			else isDone(true);
 		}
 	}
 }
@@ -238,40 +238,40 @@ HaulMaterialToBuilding::HaulMaterialToBuilding(ItemCategory cat,uint16_t structu
 	
 	auto buildingPtr = reinterpret_cast<Buildable*>(simState.m_structures[m_structureIndex].get());
 	buildingPtr->claim();
-	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y))); //go to townhall
-	m_actions.push_back(std::make_unique<GetItemFromTownHallStorageAction>(cat,10)); //get items
-	m_actions.push_back(std::make_unique<MoveToAction>(uint16_t(buildingPos.x), uint16_t(buildingPos.y))); //go to building
-	m_actions.push_back(std::make_unique<DumpToBuildingStorageAction>(m_structureIndex)); //insert materials to building storage
+	addAction(std::make_unique<MoveToAction>(uint16_t(townHallPos.x), uint16_t(townHallPos.y))); //go to townhall
+	addAction(std::make_unique<GetItemFromTownHallStorageAction>(cat, 10)); //get items
+	addAction(std::make_unique<MoveToAction>(uint16_t(buildingPos.x), uint16_t(buildingPos.y))); //go to building
+	addAction(std::make_unique<DumpToBuildingStorageAction>(m_structureIndex)); //insert materials to building storage
 }
 
 void HaulMaterialToBuilding::tick(EntityState& ent) {
 
-	if (!m_isDone) {
-		if (m_actionStep == 0) {
-			if (!m_actions[0]->m_isDone)
-				m_actions[0]->tick(ent);
-			else m_actionStep = 1;
+	if (!isDone()) {
+		if (getActionStep() == 0) {
+			if (!getAction(0)->isDone())
+				getAction(0)->tick(ent);
+			else setActionStep(1);
 		}
 
-		if (m_actionStep == 1) {
-			if (!m_actions[1]->m_isDone)
-				m_actions[1]->tick(ent);
-			else m_actionStep = 2;
+		if (getActionStep() == 1) {
+			if (!getAction(1)->isDone())
+				getAction(1)->tick(ent);
+			else setActionStep(2);
 		}
 
-		if (m_actionStep == 2) {
-			if (!m_actions[2]->m_isDone)
-				m_actions[2]->tick(ent);
-			else m_actionStep = 3;
+		if (getActionStep() == 2) {
+			if (!getAction(2)->isDone())
+				getAction(2)->tick(ent);
+			else setActionStep(3);
 		}
 
-		if (m_actionStep == 3) {
-			if (!m_actions[3]->m_isDone)
-				m_actions[3]->tick(ent);
+		if (getActionStep() == 3) {
+			if (!getAction(3)->isDone())
+				getAction(3)->tick(ent);
 			else {
 				auto buildingPtr = reinterpret_cast<Buildable*>(ent.m_wState.m_structures[m_structureIndex].get());
 				buildingPtr->unclaim();
-				m_isDone = true;
+				isDone(true);
 			}
 		}
 
@@ -283,34 +283,34 @@ GoToHouseAndMate::GoToHouseAndMate(bool birthing,uint16_t stId, SimulationState&
 	auto housePtr = dynamic_cast<House*>(simState.m_structures[stId].get());
 	
 
-	m_actions.push_back(std::make_unique<MoveToAction>((uint16_t)housePtr->m_pos.x, (uint16_t)housePtr->m_pos.y));
-	m_actions.push_back(std::make_unique<WaitForMateAction>(stId,birthing,simState,entId));
+	addAction(std::make_unique<MoveToAction>((uint16_t)housePtr->m_pos.x, (uint16_t)housePtr->m_pos.y));
+	addAction(std::make_unique<WaitForMateAction>(stId,birthing,simState,entId));
 }
 
 void GoToHouseAndMate::tick(EntityState& entState) {
 
-	if (!m_isDone) {
-		if (m_actionStep == 0) {
-			if (!m_actions[0]->m_isDone)
-				m_actions[0]->tick(entState);
+	if (!isDone()) {
+		if (getActionStep() == 0) {
+			if (!getAction(0)->isDone())
+				getAction(0)->tick(entState);
 			else {
-				m_actionStep = 1;
+				setActionStep(1);
 
 				auto housePtr = dynamic_cast<House*>(entState.m_wState.m_structures[m_houseId].get());
 				housePtr->checkIn(entState.m_id);
 			}
 		}
 
-		if (m_actionStep == 1) {
-			if (!m_actions[1]->m_isDone)
-				m_actions[1]->tick(entState);
+		if (getActionStep() == 1) {
+			if (!getAction(1)->isDone())
+				getAction(1)->tick(entState);
 			else {
 				auto housePtr = dynamic_cast<House*>(entState.m_wState.m_structures[m_houseId].get());
 				housePtr->unclaim();
-				m_isDone = true;
-				auto mateActionPtr = dynamic_cast<WaitForMateAction*>(m_actions[1].get());
+				isDone(true);
+				auto mateActionPtr = dynamic_cast<WaitForMateAction*>(getAction(1));
 				entState.setMatingCooldown();
-				if (mateActionPtr->m_wasSuccessfull && mateActionPtr->m_birthingAction) {
+				if (mateActionPtr->wasSuccessfull() && mateActionPtr->birthingAction()) {
 					entState.m_wState.spawnBabyEntity(housePtr->m_pos);
 				}
 

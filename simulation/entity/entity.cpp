@@ -30,25 +30,25 @@ void Entity::render(sf::RenderWindow& window) const {
 }
 
 void Entity::doCurrentTask() {
-	if (!m_tasks[0].task->m_isDone) {
+	if (!m_tasks[0].task->isDone()) {
 		m_tasks[0].task->tick(m_entState);
 	}
 	else m_tasks.pop_back();
 }
 
-bool Entity::isHungry() {
+bool Entity::isHungry() const {
 	return (
 		m_tickCounter % k_HungerTickDecreaseCount == 0 &&
 		m_entState.m_satiation != 0);
 }
 
-bool Entity::isStarving(){
+bool Entity::isStarving() const {
 	return (m_entState.m_satiation == 0 &&
 		m_entState.m_health != 0 &&
 		m_tickCounter % k_HealthTickDecreaseFromHungerCount == 0);
 }
 
-bool Entity::isFull(){
+bool Entity::isFull() const {
 	return (m_entState.m_satiation > k_GoEatTaskSatiationLimit &&
 		m_entState.m_health != 100 &&
 		m_tickCounter % k_HealthTickIncreaseFromSatiationCount == 0);
@@ -81,15 +81,15 @@ void Entity::evalDeath() {
 
 void Entity::updateStats() {
 
-	if (m_tickCounter % k_AgingTickCount == 0) m_entState.m_age++;
+	if (m_tickCounter % k_AgingTickCount == 0)		   m_entState.m_age++;
 	if (m_tickCounter % k_EvaluateDeathTickCount == 0) evalDeath();
-	if (isHungry()) m_entState.m_satiation--;
-	if (isStarving()) m_entState.m_health--;
-	if (isFull()) m_entState.m_health++;	
-	if (m_entState.m_health == 0) m_entState.m_isDead = true;
+	if (isHungry())									   m_entState.m_satiation--;
+	if (isStarving())								   m_entState.m_health--;
+	if (isFull())									   m_entState.m_health++;	
+	if (m_entState.m_health == 0)					   m_entState.m_isDead = true;
+	if (m_entState.m_matingCd != 0)					   m_entState.m_matingCd--;
 
 	m_tickCounter++;
-	if (m_entState.m_matingCd != 0) m_entState.m_matingCd--;
 }
 
 void Entity::sim() {
@@ -100,7 +100,7 @@ void Entity::sim() {
 	updateStats();
 }
 
-void Entity::delegateTask(PrioritizedTask tsk) const {
+void Entity::delegateTask(PrioritizedTask tsk) {
 
 	if (m_tasks.size() == 1) {
 		if (m_tasks[0].priority == 0) {
