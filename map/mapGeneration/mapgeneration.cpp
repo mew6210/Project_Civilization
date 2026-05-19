@@ -74,7 +74,7 @@ float perlin(float x, float y, unsigned int seed) {
 
 void generateMap(std::string name, int windowWidth, int windowHeight) {
 
-    if (std::filesystem::exists(name)) { //if file exists, dont generate
+    if (std::filesystem::exists(name)) {
         std::string decide;
         std::cout << "Map found, Load the found Map?\nL - load the map\nG - generate a new map\n";
         do {
