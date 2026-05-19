@@ -131,12 +131,10 @@ void TownHall::delegateGatherBushTask() {
 
 	auto bushId = findBushToGather(k_GatherThresholdAmount);
 	if (!bushId) {
-		//std::cout << "no fruits to gather\n"; TODO: ADD TO LOGGER
 		return;
 	}
 	auto entityId = findNotBusyEntityId();
 	if (!entityId) {
-		//std::cout << "no free entities\n"; TODO: ADD TO LOGGER
 		return;
 	}
 	auto entityIndex = getEntityVectorIndexByEntityId(entityId.value());
