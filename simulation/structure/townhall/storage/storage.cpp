@@ -38,6 +38,19 @@ size_t Storage::howManyFromCategoryExist(ItemCategory cat) {
 		return count;
 	}
 
+	if (cat == ItemCategory::Food) {
+
+		auto Strawberry = howManyItemTypeExist(ItemType::Strawberry);
+		auto Blueberry = howManyItemTypeExist(ItemType::Blueberry);
+		auto Raspberry = howManyItemTypeExist(ItemType::Raspberry);
+
+		count += Strawberry;
+		count += Blueberry;
+		count += Raspberry;
+		return count;
+	}
+
+
 	return count;
 }
 

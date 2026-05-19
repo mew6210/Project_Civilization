@@ -2,9 +2,6 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 
 namespace {
-
-	constexpr uint8_t k_TicksNeededToGrow = 100;
-	constexpr uint8_t k_WoodLimit = std::numeric_limits<uint8_t>::max();
 	constexpr sf::Color k_TreeColor = sf::Color(115, 81, 37);
 }
 
@@ -23,8 +20,8 @@ void Tree::render(sf::RenderWindow& win) {
 }
 
 void Tree::tick() {
-	if (m_tickCounter % k_TicksNeededToGrow == 0) {
-		if (m_woodCount < k_WoodLimit) {
+	if (m_tickCounter % m_ticksNeededToGrow == 0) {
+		if (m_woodCount < m_woodLimit) {
 			++m_woodCount;
 		}
 	}
@@ -33,7 +30,8 @@ void Tree::tick() {
 }
 
 Tree::Tree(sf::Vector2f pos,TreeType treeType) : Structure(pos),m_TreeType(treeType) {}
-
+Tree::Tree(sf::Vector2f pos,TreeType treeType, uint8_t ticksToGrow, uint8_t woodLimit) 
+	: Structure(pos),m_TreeType(treeType), m_ticksNeededToGrow(ticksToGrow), m_woodLimit(woodLimit){ }
 bool Tree::claim() {
 	
 	if (m_isClaimed) return false;

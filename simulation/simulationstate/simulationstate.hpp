@@ -22,14 +22,16 @@ class SimulationState {
  	mutable std::mt19937 rng;
 
 	void initTileGrid(const MapData&);
+
 public:
 
 	std::vector<std::unique_ptr<Structure>> m_structures = {};
 	std::vector<std::unique_ptr<Entity>> m_entities = {};
 
+	TileType getTile(const uint16_t& row, const uint16_t& col) const;
 	MapSize getMapSize() const { return mapSize; }
 	int getRandInt(int min, int max) const;
-	void addStructure(sf::Vector2f, StructureType);
+	void addStructure(sf::Vector2f, StructureType, TileType);
 	SimulationState(const MapData&);
 	void addBuilding(sf::Vector2f, BuildableType);
 	void spawnBabyEntity(sf::Vector2f);

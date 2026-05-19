@@ -5,8 +5,7 @@
 
 
 namespace {
-	constexpr uint8_t k_TicksNeededToGrow = 100;
-	constexpr uint8_t k_FruitLimit = std::numeric_limits<uint8_t>::max();
+
 	constexpr sf::Color k_BushColor = sf::Color::Magenta;
 }
 
@@ -28,8 +27,8 @@ void Bush::render(sf::RenderWindow& win) {
 	grows fruit on a bush, up to a point
 */
 void Bush::tick(){
-	if (m_tickCounter % k_TicksNeededToGrow == 0) {
-		if (m_fruitCount < k_FruitLimit) {
+	if (m_tickCounter % m_ticksNeededToGrow == 0) {
+		if (m_fruitCount < m_fruitLimit) {
 			++m_fruitCount;
 		}
 	}
@@ -38,6 +37,8 @@ void Bush::tick(){
 }
 
 Bush::Bush(sf::Vector2f pos,BushType bushType): Structure(pos),m_BushType(bushType){}
+Bush::Bush(sf::Vector2f pos, BushType bushType,uint8_t ticksToGrow,uint8_t fruitLimit) 
+	: Structure(pos), m_BushType(bushType),m_ticksNeededToGrow(ticksToGrow),m_fruitLimit(fruitLimit) {}
 
 bool Bush::claim() {
 	if (m_isClaimed) return false;

@@ -12,7 +12,8 @@ Simulation::Simulation(const MapData& md) : m_wState(md), text(font) {
 	uint16_t heightHalf = m_wState.getMapSize().m_height / 2;
 	m_wState.m_entities.push_back(std::make_unique<Entity>( m_wState, widthHalf,heightHalf));
 	m_wState.m_entities.push_back(std::make_unique<Entity>( m_wState, widthHalf,heightHalf));
-	m_wState.addStructure({ float(widthHalf),float(heightHalf)}, StructureType::TownHall);
+	TileType tile = m_wState.getTile(widthHalf, heightHalf);
+	m_wState.addStructure({ float(widthHalf),float(heightHalf)}, StructureType::TownHall,tile);
 
 	if (!font.openFromFile("fonts/Pixel.ttf")) {
 		defaultLogger.errorLog(true, "font data file failed to open");
@@ -48,17 +49,19 @@ void Simulation::simulateEntities() {
 
 void Simulation::promoteBuilding(size_t stIndex) {
 	auto buildingPtr = dynamic_cast<Buildable*>(m_wState.m_structures[stIndex].get());
+	if (!buildingPtr) return;
 	auto buildingPos = buildingPtr->m_pos;
-	if (buildingPtr->getBuildingType() == BuildableType::House) {
+	auto buildingtype = buildingPtr->getBuildingType();
+	if (buildingtype == BuildableType::House) {
 		m_wState.m_structures[stIndex] = std::make_unique<House>(buildingPos);
 		auto townhallPtr = dynamic_cast<TownHall*>(m_wState.m_structures[0].get());
 		townhallPtr->m_BuildingsScheduled--;
 		defaultLogger.infoLog("Built a house");
 	}
-	if (buildingPtr->getBuildingType() == BuildableType::Farm) {
+	if (buildingtype == BuildableType::Farm) {
 		defaultLogger.errorLog(false, "NOT YET IMPLEMENTED");
 	}
-	if (buildingPtr->getBuildingType() == BuildableType::Quarry) {
+	if (buildingtype == BuildableType::Quarry) {
 		defaultLogger.errorLog(false, "NOT YET IMPLEMENTED");
 	}
 
@@ -107,9 +110,12 @@ void Simulation::renderEntities(sf::RenderWindow& window) {
 }
 
 void Simulation::spawnAt(sf::Vector2f pos, ActiveTool type) {
+	TileType tile = m_wState.getTile(pos.x, pos.y);
 	if (type == ActiveTool::None)   return;
-	if (type == ActiveTool::Bush)   m_wState.addStructure(pos, StructureType::Bush);
-	if (type == ActiveTool::Tree)   m_wState.addStructure(pos, StructureType::Tree);
+	if (type == ActiveTool::Bush) {
+		m_wState.addStructure(pos, StructureType::Bush, tile);
+	}   
+	if (type == ActiveTool::Tree)   m_wState.addStructure(pos, StructureType::Tree,tile);
 	if (type == ActiveTool::Entity) m_wState.m_entities.push_back(std::make_unique<Entity>( m_wState, (uint16_t)pos.x, (uint16_t)pos.y ));
 }
 

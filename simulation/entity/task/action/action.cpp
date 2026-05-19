@@ -99,7 +99,7 @@ void GetItemFromTownHallStorageAction::tick(EntityState& ent) {
 }
 
 namespace {
-	constexpr int foodSatiation = 10; //to be changed
+	constexpr int foodSatiation = 18; //to be changed
 }
 
 void ConsumeHaulAction::tick(EntityState& ent) {
@@ -114,7 +114,7 @@ void ConsumeHaulAction::tick(EntityState& ent) {
 		ent.m_satiation += foodAmount * foodSatiation;
 		ent.m_haul = Item{ ItemType::Null,0 };
 		
-		defaultLogger.infoLog("entId: ",ent.m_id," eaten food, current satiation: ",ent.m_satiation," current hp: ",ent.m_health);
+		//defaultLogger.infoLog("entId: ",ent.m_id," eaten food, current satiation: ",ent.m_satiation," current hp: ",ent.m_health);
 		m_isDone = true;
 	}
 	else {
@@ -155,6 +155,7 @@ void WaitForMateAction::tick(EntityState& ent) {
 	if (!housePtr->isClaimed()) {
 		housePtr->checkOut(ent.m_id);
 		//defaultLogger.infoLog("mating assumed successfull");
+		housePtr->unclaim();
 		m_wasSuccessfull = true;
 		m_isDone = true;
 		return;
@@ -169,6 +170,7 @@ void WaitForMateAction::tick(EntityState& ent) {
 
 	if (m_tickCounter > 600) {
 		m_isDone = true;
+		housePtr->unclaim();
 		housePtr->checkOut(ent.m_id);
 		return;
 	}
