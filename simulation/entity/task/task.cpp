@@ -2,6 +2,7 @@
 #include "../../simulationstate/simulationstate.hpp"
 #include <iostream>
 #include "../../structure/house/house.hpp"
+#include "../../../utility/logger/logger.hpp"
 
 /*
 	Chooses a place in 50 tiles radius and creates an action to go to that place
@@ -95,7 +96,14 @@ void GatherFruitBushTask::tick(EntityState& ent) {
 
 		if (getActionStep() == 3) {
 			if (!getAction(3)->isDone())
-				getAction(3)->tick(ent);
+				try {
+					getAction(3)->tick(ent);
+				}
+				catch (const std::exception& e) {
+					defaultLogger.errorLog("DumpToTownHallStorageAction failed, this should never happen");
+					isDone(true);
+				}
+
 			else {
 				isDone(true);
 			}

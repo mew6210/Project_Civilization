@@ -42,11 +42,13 @@ void DumpToTownHallStorageAction::tick(EntityState& ent) {
 	if (ent.m_posX != townHallPosX){
 		isDone(true);
 		defaultLogger.errorLog(false, "townhall Position and dumpToSTorageAction x axis does not match");
+		throw std::exception("townhall Position and dumpToSTorageAction x axis does not match");
 		return;
 	}
 	if (ent.m_posY != townHallPosY){
 		isDone(true);
 		defaultLogger.errorLog(false, "townhall Position and dumpToSTorageAction y axis does not match");
+		throw std::exception("townhall Position and dumpToSTorageAction x axis does not match");
 		return;
 	}
 
