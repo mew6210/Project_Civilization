@@ -54,7 +54,6 @@ bool Entity::isFull() const {
 		m_tickCounter % k_HealthTickIncreaseFromSatiationCount == 0);
 }
 
-//AI GENERATED
 void Entity::evalDeath() {
 
 	if (m_entState.m_age < 70) return;
