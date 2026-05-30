@@ -13,15 +13,27 @@ SFML::System
 )
 
 add_executable (${PROJECT_NAME} 
-"main.cpp" 
-"map/map.cpp" 
-"map/mapData/mapdata.cpp" 
-"map/mapView/mapview.cpp"
-"map/mapGeneration/mapgeneration.cpp"
-"simulation/simulation.cpp" 
-"game/game.cpp" 
-"simulation/entity/entity.cpp" 
-"simulation/simulationstate/simulationstate.cpp" "simulation/entity/task/task.cpp" "simulation/entity/task/action/action.cpp" "simulation/entity/entitystate/entitystate.cpp" "simulation/structure/structure.cpp" "simulation/structure/bush/bush.cpp" "simulation/structure/tree/tree.cpp" "simulation/structure/townhall/townhall.cpp" "simulation/structure/house/house.cpp" "simulation/structure/townhall/storage/storage.cpp" "utility/logger/logger.cpp" "simulation/structure/buildable/buildable.cpp" "simulation/structure/buildable/recipe/recipe.cpp")
+"src/main.cpp" 
+"src/map/map.cpp" 
+"src/map/mapData/mapdata.cpp" 
+"src/map/mapView/mapview.cpp"
+"src/map/mapGeneration/mapgeneration.cpp"
+"src/simulation/simulation.cpp" 
+"src/game/game.cpp" 
+"src/simulation/entity/entity.cpp" 
+"src/simulation/simulationstate/simulationstate.cpp" 
+"src/simulation/entity/task/task.cpp" 
+"src/simulation/entity/task/action/action.cpp" 
+"src/simulation/entity/entitystate/entitystate.cpp" 
+"src/simulation/structure/structure.cpp" 
+"src/simulation/structure/bush/bush.cpp" 
+"src/simulation/structure/tree/tree.cpp" 
+"src/simulation/structure/townhall/townhall.cpp" 
+"src/simulation/structure/house/house.cpp" 
+"src/simulation/structure/townhall/storage/storage.cpp" 
+"src/utility/logger/logger.cpp" 
+"src/simulation/structure/buildable/buildable.cpp" 
+"src/simulation/structure/buildable/recipe/recipe.cpp")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES})
 
