@@ -398,7 +398,6 @@ void TownHall::queueBuildings() {
 }
 
 
-//AI GENERATED
 sf::Vector2f TownHall::getSuitableHousePosition()
 {
 	constexpr float HOUSE_RADIUS = 8.f;      // approximate house size

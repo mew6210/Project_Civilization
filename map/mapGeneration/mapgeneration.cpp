@@ -72,7 +72,7 @@ float perlin(float x, float y, unsigned int seed) {
     return value;
 }
 
-void generateMap(std::string name, int windowWidth, int windowHeight) {
+void generateMap(std::string name) {
 
     if (std::filesystem::exists(name)) {
         std::string decide;
@@ -94,9 +94,34 @@ void generateMap(std::string name, int windowWidth, int windowHeight) {
         std::cout << "No map found";
     }
 
+    int windowWidth = 0;
+    int windowHeight = 0;
+
+    do {
+        std::cout << "Enter map Width, between 400 and 2000\n";
+        std::cin >> windowWidth;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (windowWidth >= 400 && windowWidth <= 2000) {
+            break;
+        }
+        std::cout << "Incorrect width, try again\n";
+    } while (true);
+
+    do {
+        std::cout << "Enter map Height, between 400 and 2000\n";
+        std::cin >> windowHeight;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (windowHeight >= 400 && windowHeight <= 2000) {
+            break;
+        }
+        std::cout << "Incorrect Height, try again\n";
+    } while (true);
+
     unsigned int seed = 0;
     std::string seedInText;
-    std::cout << "Input Map Seed:\n";
+    std::cout << "Enter Map Seed:\n";
     std::getline(std::cin >> std::ws, seedInText);
     for (char c : seedInText) {
         if (seed >= 2147482648) {
