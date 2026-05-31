@@ -8,8 +8,7 @@
 #include "../map/mapData/tile.hpp"
 #include "mapsize/mapsize.hpp"
 #include "simulationstate/simulationstate.hpp"
-#include "../game/handleinput/handleinput.hpp"
-
+#include "../game/inputhandler/activetool.hpp"
 
 /*
 	@brief represents simulation state 

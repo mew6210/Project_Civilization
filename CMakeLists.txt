@@ -33,7 +33,7 @@ add_executable (${PROJECT_NAME}
 "src/simulation/structure/townhall/storage/storage.cpp" 
 "src/utility/logger/logger.cpp" 
 "src/simulation/structure/buildable/buildable.cpp" 
-"src/simulation/structure/buildable/recipe/recipe.cpp" "src/interfaceview/interfaceview.cpp" "src/utility/itemtypetostring/itemtypetostring.cpp")
+"src/simulation/structure/buildable/recipe/recipe.cpp" "src/interfaceview/interfaceview.cpp" "src/utility/itemtypetostring/itemtypetostring.cpp" "src/game/inputhandler/inputhandler.cpp")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES})
 
