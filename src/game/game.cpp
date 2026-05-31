@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-Game::Game(const std::string& f): map(f),mView(map),sim(map.getMapData()) {}
+Game::Game(const std::string& f): map(f),mView(map),sim(map.getMapData()),iView() {}
 
 void Game::printUserManual() {
     std::cout << "=================================================================\n";
@@ -121,6 +121,6 @@ void Game::render(sf::RenderWindow& window){
     window.clear(sf::Color::Black);
     mView.drawMap(window);
     sim.render(window);
+    iView.render(window,sim,map.getMapData().getMapSize());
     window.display();
-
 }

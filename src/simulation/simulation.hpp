@@ -1,13 +1,13 @@
+#pragma once
 #include <vector>
 
-#include "../map/mapData/tile.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
-#include "mapsize/mapsize.hpp"
-#include "simulationstate/simulationstate.hpp"
-
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Font.hpp>
 
+#include "../map/mapData/tile.hpp"
+#include "mapsize/mapsize.hpp"
+#include "simulationstate/simulationstate.hpp"
 #include "../game/handleinput/handleinput.hpp"
 
 
@@ -21,12 +21,9 @@ class Simulation {
 	SimulationState m_wState;
 
 	uint8_t m_tickRate = 20;
-	sf::Font font;
-	sf::Text text;
 
 	void renderEntities(sf::RenderWindow&);
 	void renderStructures(sf::RenderWindow&);
-	void renderUi(sf::RenderWindow&);
 	void simulateEntities();
 	void simulateStructures();
 	void promoteBuildings();
@@ -38,4 +35,9 @@ public:
 	void simulate();
 	void render(sf::RenderWindow&);
 	void spawnAt(sf::Vector2f pos, ActiveTool type);
+	SimulationState& getSimulationState() { return m_wState; }
+
+	size_t getEntitiesAmount() const { return m_wState.getEntiesSize(); }
+	uint16_t getHousesCount() { return m_wState.getHousesCount(); }
+
 };

@@ -37,6 +37,7 @@ public:
 	void addEntity(std::unique_ptr<Entity> ent) { m_entities.push_back(std::move(ent)); }
 	void reserveEntities(uint16_t count) { m_entities.reserve(count); }
 	std::vector<std::unique_ptr<Entity>>& getEntities() { return m_entities; }
+	size_t getEntiesSize() const { return m_entities.size(); }
 
 	//other
 	TileType getTile(const uint16_t& row, const uint16_t& col) const;

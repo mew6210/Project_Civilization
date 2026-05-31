@@ -3,6 +3,7 @@
 #include "tile.hpp"
 #include <vector>
 #include <string>
+#include "../../simulation/mapsize/mapsize.hpp"
 
 /*
 	@brief Holds size and pixels of a map.
@@ -27,4 +28,5 @@ public:
 	uint16_t getHeight() const { return m_height; }
 	std::string getDataString() const { return dataToDataString(); };
 	std::vector<TileType> getDataCopy() { return m_data; }
+	MapSize getMapSize() { return { m_width,m_height }; }
 };
