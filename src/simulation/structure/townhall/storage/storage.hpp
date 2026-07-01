@@ -17,5 +17,5 @@ public:
 	void operator+=(Item); // use += when insertItems should not produce a log
 	bool requestItems(EntityState&, Item);
 	bool requestCategory(EntityState&,ItemCategory, uint64_t);
-	void renderItemList(sf::RenderWindow& win);
+	const std::vector<Item>& getItemsView() { return m_items; }
 };

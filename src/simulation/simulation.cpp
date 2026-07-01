@@ -6,7 +6,7 @@
 #include "structure/house/house.hpp"
 
 
-Simulation::Simulation(const MapData& md) : m_wState(md), text(font) {
+Simulation::Simulation(const MapData& md) : m_wState(md){
 	m_wState.reserveEntities(1000);
 	uint16_t widthHalf = m_wState.getMapSize().m_width / 2;
 	uint16_t heightHalf = m_wState.getMapSize().m_height / 2;
@@ -14,14 +14,6 @@ Simulation::Simulation(const MapData& md) : m_wState(md), text(font) {
 	m_wState.addEntity(std::make_unique<Entity>( m_wState, widthHalf,heightHalf));
 	TileType tile = m_wState.getTile(widthHalf, heightHalf);
 	m_wState.addStructure({ float(widthHalf),float(heightHalf)}, StructureType::TownHall,tile);
-
-	if (!font.openFromFile("fonts/Pixel.ttf")) {
-		defaultLogger.errorLog(true, "font data file failed to open");
-	}
-	text.setFont(font);
-	text.setCharacterSize(18);
-	text.setFillColor(sf::Color(255, 255, 255, 200));
-	text.setPosition({ 250, 0 });
 }
 
 void Simulation::simulateEntities() {
@@ -125,17 +117,7 @@ void Simulation::renderStructures(sf::RenderWindow& window) {
 	}
 }
 
-void Simulation::renderUi(sf::RenderWindow& window) {
-
-	std::string entityAmount= "Citizens: " + std::to_string(m_wState.getEntities().size())+"\n";
-	std::string houseAmount = "Houses: " + std::to_string(m_wState.getHousesCount());
-	std::string sum = entityAmount + houseAmount;
-	text.setString(sum);
-	window.draw(text);
-}
-
 void Simulation::render(sf::RenderWindow& window) {
 	renderEntities(window);
 	renderStructures(window);
-	renderUi(window);
 }
